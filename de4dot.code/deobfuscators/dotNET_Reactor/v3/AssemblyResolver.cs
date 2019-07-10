@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -26,21 +26,12 @@ namespace de4dot.code.deobfuscators.dotNET_Reactor.v3 {
 	class AssemblyResolver {
 		DecryptMethod decryptMethod = new DecryptMethod();
 
-		public byte[] Key {
-			get { return decryptMethod.Key; }
-		}
+		public byte[] Key => decryptMethod.Key;
+		public byte[] Iv => decryptMethod.Iv;
+		public bool Detected => decryptMethod.Detected;
 
-		public byte[] Iv {
-			get { return decryptMethod.Iv; }
-		}
-
-		public bool Detected {
-			get { return decryptMethod.Detected; }
-		}
-
-		public AssemblyResolver(TypeDef type, ICflowDeobfuscator cflowDeobfuscator) {
+		public AssemblyResolver(TypeDef type, ICflowDeobfuscator cflowDeobfuscator) =>
 			Find(type, cflowDeobfuscator);
-		}
 
 		void Find(TypeDef type, ICflowDeobfuscator cflowDeobfuscator) {
 			var additionalTypes = new List<string> {

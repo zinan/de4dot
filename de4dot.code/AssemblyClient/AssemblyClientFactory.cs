@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -26,37 +26,39 @@ namespace de4dot.code.AssemblyClient {
 	}
 
 	public class SameAppDomainAssemblyClientFactory : IAssemblyClientFactory {
-		public IAssemblyClient Create(AssemblyServiceType serviceType) {
-			return new AssemblyClient(new SameAppDomainAssemblyServerLoader(serviceType));
-		}
+		public IAssemblyClient Create(AssemblyServiceType serviceType) => new AssemblyClient(new SameAppDomainAssemblyServerLoader(serviceType));
 	}
 
 	public class NewAppDomainAssemblyClientFactory : IAssemblyClientFactory {
-		public IAssemblyClient Create(AssemblyServiceType serviceType) {
-			return new AssemblyClient(new NewAppDomainAssemblyServerLoader(serviceType));
-		}
+		public IAssemblyClient Create(AssemblyServiceType serviceType) =>
+#if NETFRAMEWORK
+			new AssemblyClient(new NewAppDomainAssemblyServerLoader(serviceType));
+#else
+			new AssemblyClient(new SameAppDomainAssemblyServerLoader(serviceType));
+#endif
 	}
 
 	public class NewProcessAssemblyClientFactory : IAssemblyClientFactory {
 		ServerClrVersion serverVersion;
 
-		public NewProcessAssemblyClientFactory() {
-			this.serverVersion = ServerClrVersion.CLR_ANY_ANYCPU;
-		}
+		public NewProcessAssemblyClientFactory() => serverVersion = ServerClrVersion.CLR_ANY_ANYCPU;
+		public NewProcessAssemblyClientFactory(ServerClrVersion serverVersion) => this.serverVersion = serverVersion;
 
-		internal NewProcessAssemblyClientFactory(ServerClrVersion serverVersion) {
-			this.serverVersion = serverVersion;
-		}
+		public IAssemblyClient Create(AssemblyServiceType serviceType, ModuleDef module) =>
+#if NETFRAMEWORK
+			new AssemblyClient(new NewProcessAssemblyServerLoader(serviceType, GetServerClrVersion(module)));
+#else
+			new AssemblyClient(new SameAppDomainAssemblyServerLoader(serviceType));
+#endif
 
-		public IAssemblyClient Create(AssemblyServiceType serviceType, ModuleDef module) {
-			return new AssemblyClient(new NewProcessAssemblyServerLoader(serviceType, GetServerClrVersion(module)));
-		}
+		public IAssemblyClient Create(AssemblyServiceType serviceType) =>
+#if NETFRAMEWORK
+			new AssemblyClient(new NewProcessAssemblyServerLoader(serviceType, serverVersion));
+#else
+			new AssemblyClient(new SameAppDomainAssemblyServerLoader(serviceType));
+#endif
 
-		public IAssemblyClient Create(AssemblyServiceType serviceType) {
-			return new AssemblyClient(new NewProcessAssemblyServerLoader(serviceType, serverVersion));
-		}
-
-		internal static ServerClrVersion GetServerClrVersion(ModuleDef module) {
+		public static ServerClrVersion GetServerClrVersion(ModuleDef module) {
 			switch (module.GetPointerSize()) {
 			default:
 			case 4:

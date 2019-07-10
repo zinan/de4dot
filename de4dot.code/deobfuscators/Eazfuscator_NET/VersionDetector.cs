@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using dnlib.DotNet.Emit;
 using dnlib.DotNet;
 using de4dot.blocks;
 
@@ -29,7 +30,7 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 
 		public VersionDetector(ModuleDefMD module, StringDecrypter stringDecrypter) {
 			this.stringDecrypter = stringDecrypter;
-			this.frameworkType = DotNetUtils.GetFrameworkType(module);
+			frameworkType = DotNetUtils.GetFrameworkType(module);
 		}
 
 		public string Detect() {
@@ -667,7 +668,7 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 					(decryptStringMethod.Body.ExceptionHandlers.Count == 1 || decryptStringMethod.Body.ExceptionHandlers.Count == 2) &&
 					new LocalTypes(decryptStringMethod).Exactly(locals33_149) &&
 					CheckTypeFields2(fields33_149)) {
-					return "3.3.149 - 3.4";	// 3.3.149+ (but not SL or CF)
+					return "3.3.149 - 3.4"; // 3.3.149+ (but not SL or CF)
 				}
 
 				/////////////////////////////////////////////////////////////////
@@ -777,7 +778,67 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 					decryptStringMethod.Body.ExceptionHandlers.Count >= 2 &&
 					new LocalTypes(decryptStringMethod).All(locals43) &&
 					CheckTypeFields2(fields43)) {
-					return "4.3";
+					return "4.3 - 4.9";
+				}
+
+				/////////////////////////////////////////////////////////////////
+				/////////////////////////////////////////////////////////////////
+				/////////////////////////////////////////////////////////////////
+
+				var fields50 = new string[] {
+					GetNestedTypeName(0),
+					GetNestedTypeName(1),
+					"System.Byte[]",
+					"System.Int16",
+					"System.Int32",
+					"System.Byte[]",
+					"System.Int32",
+					"System.Int32",
+					GetNestedTypeName(2),
+				};
+				var locals50 = CreateLocalsArray(
+					// GetNestedTypeName(2) // One of the nested types is the first local (non-enum type)
+					"System.String",
+					"System.String"
+				);
+				var otherMethod50 = otherMethods.Find((m) => {
+					return DotNetUtils.IsMethod(m, "System.Void", "(System.Byte[],System.Int32,System.Byte[])");
+				});
+				decryptStringMethod = stringDecrypter.RealMethod;
+				if (stringDecrypter.HasRealMethod &&
+					otherMethods.Count == 2 &&
+					otherMethod50 != null &&
+					decryptStringType.NestedTypes.Count == 3 &&
+					otherMethod50.IsPrivate &&
+					otherMethod50.IsStatic &&
+					decryptStringMethod.IsNoInlining &&
+					decryptStringMethod.IsAssembly &&
+					!decryptStringMethod.IsSynchronized &&
+					decryptStringMethod.Body.MaxStack >= 1 &&
+					decryptStringMethod.Body.MaxStack <= 8 &&
+					decryptStringMethod.Body.ExceptionHandlers.Count == 1 &&
+					new LocalTypes(decryptStringMethod).All(locals50) &&
+					CheckTypeFields2(fields50)) {
+					foreach (var inst in stringDecrypter.Method.Body.Instructions) {
+						if (inst.OpCode.Code == Code.Cgt_Un)
+							return "5.1";
+					}
+					return "5.0";
+				}
+
+				if (stringDecrypter.HasRealMethod &&
+				    otherMethods.Count == 5 &&
+				    otherMethod50 != null &&
+				    decryptStringType.NestedTypes.Count == 3 &&
+				    otherMethod50.IsPrivate &&
+				    otherMethod50.IsStatic &&
+				    decryptStringMethod.IsNoInlining &&
+				    decryptStringMethod.IsAssembly &&
+				    !decryptStringMethod.IsSynchronized &&
+				    decryptStringMethod.Body.MaxStack >= 1 &&
+				    decryptStringMethod.Body.MaxStack <= 8 &&
+				    decryptStringMethod.Body.ExceptionHandlers.Count == 1) {
+					return "5.2-5.8";
 				}
 			}
 
@@ -828,10 +889,7 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 			return null;
 		}
 
-		string GetNestedTypeName(int n) {
-			var nestedType = GetNestedType(n);
-			return nestedType == null ? null : nestedType.FullName;
-		}
+		string GetNestedTypeName(int n) => GetNestedType(n)?.FullName;
 
 		bool CheckTypeFields(string[] fieldTypes) {
 			if (fieldTypes.Length != stringDecrypter.Type.Fields.Count)

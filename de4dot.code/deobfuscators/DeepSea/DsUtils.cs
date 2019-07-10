@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -24,25 +24,22 @@ using de4dot.blocks;
 
 namespace de4dot.code.deobfuscators.DeepSea {
 	static class DsUtils {
-		public static IList<object> GetArgValues(IList<Instruction> instrs, int index) {
-			return GetArgValues(DotNetUtils.GetArgPushes(instrs, index));
-		}
+		public static IList<object> GetArgValues(IList<Instruction> instrs, int index) =>
+			GetArgValues(DotNetUtils.GetArgPushes(instrs, index));
 
 		public static IList<object> GetArgValues(IList<Instruction> argInstrs) {
 			if (argInstrs == null)
 				return null;
 			var args = new List<object>(argInstrs.Count);
 			foreach (var argInstr in argInstrs) {
-				object arg;
-				GetArgValue(argInstr, out arg);
+				GetArgValue(argInstr, out object arg);
 				args.Add(arg);
 			}
 			return args;
 		}
 
-		public static bool GetArgValue(MethodDef method, int index, out object arg) {
-			return GetArgValue(method.Body.Instructions[index], out arg);
-		}
+		public static bool GetArgValue(MethodDef method, int index, out object arg) =>
+			GetArgValue(method.Body.Instructions[index], out arg);
 
 		public static bool GetArgValue(Instruction instr, out object arg) {
 			switch (instr.OpCode.Code) {

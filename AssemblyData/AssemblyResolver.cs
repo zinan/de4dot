@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -29,9 +29,7 @@ namespace AssemblyData {
 		Dictionary<string, bool> assemblySearchPathsDict = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 		List<string> assemblySearchPaths = new List<string>();
 
-		public AssemblyResolver() {
-			AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
-		}
+		public AssemblyResolver() => AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
 
 		void AddAssemblySearchPath(string path) {
 			if (assemblySearchPathsDict.ContainsKey(path))
@@ -43,8 +41,7 @@ namespace AssemblyData {
 		Assembly Get(string assemblyFullName) {
 			var asmName = new AssemblyName(assemblyFullName);
 
-			Assembly assembly;
-			if (assemblies.TryGetValue(asmName.FullName, out assembly))
+			if (assemblies.TryGetValue(asmName.FullName, out var assembly))
 				return assembly;
 			if (assemblies.TryGetValue(asmName.Name, out assembly))
 				return assembly;

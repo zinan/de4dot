@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -17,7 +17,6 @@
     along with de4dot.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
@@ -45,9 +44,7 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 		}
 
 		public ProxyCallFixer(ModuleDefMD module, ISimpleDeobfuscator simpleDeobfuscator)
-			: base(module) {
-			this.simpleDeobfuscator = simpleDeobfuscator;
-		}
+			: base(module) => this.simpleDeobfuscator = simpleDeobfuscator;
 
 		protected override object CheckCctor(ref TypeDef type, MethodDef cctor) {
 			var instrs = cctor.Body.Instructions;
@@ -85,8 +82,7 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 					break;
 				}
 
-				int val;
-				if (specialCharsDict.TryGetValue(c, out val))
+				if (specialCharsDict.TryGetValue(c, out int val))
 					memberRefRid = memberRefRid * (uint)specialChars.Length + (uint)val;
 			}
 			memberRefRid++;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -24,7 +24,7 @@ using dnlib.DotNet.Emit;
 using de4dot.blocks;
 
 namespace de4dot.code.deobfuscators {
-	abstract class ValueInlinerBase<TValue> : MethodReturnValueInliner {
+	public abstract class ValueInlinerBase<TValue> : MethodReturnValueInliner {
 		MethodDefAndDeclaringTypeDict<Func<MethodDef, MethodSpec, object[], object>> decrypterMethods = new MethodDefAndDeclaringTypeDict<Func<MethodDef, MethodSpec, object[], object>>();
 		bool removeUnbox = false;
 
@@ -33,29 +33,24 @@ namespace de4dot.code.deobfuscators {
 			public MethodSpec gim;
 			public MyCallResult(Block block, int callEndIndex, IMethod method, MethodSpec gim)
 				: base(block, callEndIndex) {
-				this.methodRef = method;
+				methodRef = method;
 				this.gim = gim;
 			}
 		}
 
 		public bool RemoveUnbox {
-			get { return removeUnbox; }
-			set { removeUnbox = value; }
+			get => removeUnbox;
+			set => removeUnbox = value;
 		}
 
-		public override bool HasHandlers {
-			get { return decrypterMethods.Count != 0; }
-		}
-
-		public IEnumerable<MethodDef> Methods {
-			get { return decrypterMethods.GetKeys(); }
-		}
+		public override bool HasHandlers => decrypterMethods.Count != 0;
+		public IEnumerable<MethodDef> Methods => decrypterMethods.GetKeys();
 
 		public void Add(MethodDef method, Func<MethodDef, MethodSpec, object[], object> handler) {
 			if (method == null)
 				return;
 			if (decrypterMethods.Find(method) != null)
-				throw new ApplicationException(string.Format("Handler for method {0:X8} has already been added", method.MDToken.ToInt32()));
+				throw new ApplicationException($"Handler for method {method.MDToken.ToInt32():X8} has already been added");
 			if (method != null)
 				decrypterMethods.Add(method, handler);
 		}
@@ -91,7 +86,7 @@ namespace de4dot.code.deobfuscators {
 		}
 	}
 
-	class BooleanValueInliner : ValueInlinerBase<bool> {
+	public class BooleanValueInliner : ValueInlinerBase<bool> {
 		protected override void InlineReturnValues(IList<CallResult> callResults) {
 			foreach (var callResult in callResults) {
 				var block = callResult.block;
@@ -104,7 +99,7 @@ namespace de4dot.code.deobfuscators {
 		}
 	}
 
-	class Int32ValueInliner : ValueInlinerBase<int> {
+	public class Int32ValueInliner : ValueInlinerBase<int> {
 		protected override void InlineReturnValues(IList<CallResult> callResults) {
 			foreach (var callResult in callResults) {
 				var block = callResult.block;
@@ -117,7 +112,7 @@ namespace de4dot.code.deobfuscators {
 		}
 	}
 
-	class Int64ValueInliner : ValueInlinerBase<long> {
+	public class Int64ValueInliner : ValueInlinerBase<long> {
 		protected override void InlineReturnValues(IList<CallResult> callResults) {
 			foreach (var callResult in callResults) {
 				var block = callResult.block;
@@ -130,7 +125,7 @@ namespace de4dot.code.deobfuscators {
 		}
 	}
 
-	class SingleValueInliner : ValueInlinerBase<float> {
+	public class SingleValueInliner : ValueInlinerBase<float> {
 		protected override void InlineReturnValues(IList<CallResult> callResults) {
 			foreach (var callResult in callResults) {
 				var block = callResult.block;
@@ -143,7 +138,7 @@ namespace de4dot.code.deobfuscators {
 		}
 	}
 
-	class DoubleValueInliner : ValueInlinerBase<double> {
+	public class DoubleValueInliner : ValueInlinerBase<double> {
 		protected override void InlineReturnValues(IList<CallResult> callResults) {
 			foreach (var callResult in callResults) {
 				var block = callResult.block;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -27,13 +27,11 @@ namespace de4dot.code.deobfuscators.Agile_NET.vm.v2 {
 		public string Name { get; private set; }
 
 		public OpCodeHandlerInfo(HandlerTypeCode typeCode) {
-			this.TypeCode = typeCode;
-			this.Name = GetHandlerName(typeCode);
+			TypeCode = typeCode;
+			Name = GetHandlerName(typeCode);
 		}
 
-		public override string ToString() {
-			return Name;
-		}
+		public override string ToString() => Name;
 
 		public static string GetCompositeName(IList<HandlerTypeCode> typeCodes) {
 			if (typeCodes.Count == 0)

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -19,8 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using dnlib.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using de4dot.blocks;
@@ -38,33 +36,13 @@ namespace de4dot.code.deobfuscators.CryptoObfuscator {
 		EmbeddedResource encryptedResource;
 		byte[] constantsData;
 
-		public TypeDef Type {
-			get { return decrypterType; }
-		}
-
-		public EmbeddedResource Resource {
-			get { return encryptedResource; }
-		}
-
-		public MethodDef Int32Decrypter {
-			get { return methodI4; }
-		}
-
-		public MethodDef Int64Decrypter {
-			get { return methodI8; }
-		}
-
-		public MethodDef SingleDecrypter {
-			get { return methodR4; }
-		}
-
-		public MethodDef DoubleDecrypter {
-			get { return methodR8; }
-		}
-
-		public bool Detected {
-			get { return decrypterType != null; }
-		}
+		public TypeDef Type => decrypterType;
+		public EmbeddedResource Resource => encryptedResource;
+		public MethodDef Int32Decrypter => methodI4;
+		public MethodDef Int64Decrypter => methodI8;
+		public MethodDef SingleDecrypter => methodR4;
+		public MethodDef DoubleDecrypter => methodR8;
+		public bool Detected => decrypterType != null;
 
 		public ConstantsDecrypter(ModuleDefMD module, InitializedDataCreator initializedDataCreator) {
 			this.module = module;
@@ -113,26 +91,22 @@ namespace de4dot.code.deobfuscators.CryptoObfuscator {
 			if (decrypterType == null)
 				return;
 
-			encryptedResource = CoUtils.GetResource(module, DotNetUtils.GetCodeStrings(decrypterType.FindStaticConstructor()));
-			encryptedResource.Data.Position = 0;
-			constantsData = resourceDecrypter.Decrypt(encryptedResource.Data.CreateStream());
+			var cctor = decrypterType.FindStaticConstructor();
+			encryptedResource = CoUtils.GetResource(module, DotNetUtils.GetCodeStrings(cctor));
+
+			//if the return value is null, it is possible that resource name is encrypted
+			if (encryptedResource == null) {
+				var Resources = new string[] { CoUtils.DecryptResourceName(module, cctor) };
+				encryptedResource = CoUtils.GetResource(module, Resources);
+			}
+
+			constantsData = resourceDecrypter.Decrypt(encryptedResource.CreateReader().AsStream());
 		}
 
-		public int DecryptInt32(int index) {
-			return BitConverter.ToInt32(constantsData, index);
-		}
-
-		public long DecryptInt64(int index) {
-			return BitConverter.ToInt64(constantsData, index);
-		}
-
-		public float DecryptSingle(int index) {
-			return BitConverter.ToSingle(constantsData, index);
-		}
-
-		public double DecryptDouble(int index) {
-			return BitConverter.ToDouble(constantsData, index);
-		}
+		public int DecryptInt32(int index) => BitConverter.ToInt32(constantsData, index);
+		public long DecryptInt64(int index) => BitConverter.ToInt64(constantsData, index);
+		public float DecryptSingle(int index) => BitConverter.ToSingle(constantsData, index);
+		public double DecryptDouble(int index) => BitConverter.ToDouble(constantsData, index);
 
 		struct ArrayInfo {
 			public CorLibTypeSig arrayType;

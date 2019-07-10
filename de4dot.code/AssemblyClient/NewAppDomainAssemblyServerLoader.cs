@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -17,13 +17,14 @@
     along with de4dot.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#if NETFRAMEWORK
 using System;
 using System.Threading;
 using AssemblyData;
 
 namespace de4dot.code.AssemblyClient {
 	// Starts the server in a new app domain.
-	sealed class NewAppDomainAssemblyServerLoader : IpcAssemblyServerLoader {
+	public sealed class NewAppDomainAssemblyServerLoader : IpcAssemblyServerLoader {
 		AppDomain appDomain;
 		Thread thread;
 
@@ -84,3 +85,4 @@ namespace de4dot.code.AssemblyClient {
 		}
 	}
 }
+#endif

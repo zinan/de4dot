@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -55,7 +55,7 @@ namespace de4dot.code.deobfuscators.ILProtector {
 		void CheckRuntimeFiles() {
 			foreach (var info in mainType.RuntimeFileInfos) {
 				if (!File.Exists(info.PathName))
-					Logger.w(string.Format("ILProtector runtime file '{0}' is missing.", info.PathName));
+					Logger.w($"ILProtector runtime file '{info.PathName}' is missing.");
 			}
 		}
 

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -20,6 +20,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
+#pragma warning disable CS0693, CS0414, CS0169, CS0108, CS0067
 
 namespace Test.Rename.Dll {
 	static class g {

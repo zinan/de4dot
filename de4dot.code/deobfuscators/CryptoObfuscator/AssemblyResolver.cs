@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -42,30 +42,14 @@ namespace de4dot.code.deobfuscators.CryptoObfuscator {
 				this.symbolsResource = symbolsResource;
 			}
 
-			public override string ToString() {
-				return string.Format("{{{0} => {1}}}", assemblyName, resource.Name);
-			}
+			public override string ToString() => $"{{{assemblyName} => {resource.Name}}}";
 		}
 
-		public bool Detected {
-			get { return resolverType != null; }
-		}
-
-		public List<AssemblyInfo> AssemblyInfos {
-			get { return assemblyInfos; }
-		}
-
-		public TypeDef Type {
-			get { return resolverType; }
-		}
-
-		public MethodDef Method {
-			get { return resolverMethod; }
-		}
-
-		public AssemblyResolver(ModuleDefMD module) {
-			this.module = module;
-		}
+		public bool Detected => resolverType != null;
+		public List<AssemblyInfo> AssemblyInfos => assemblyInfos;
+		public TypeDef Type => resolverType;
+		public MethodDef Method => resolverMethod;
+		public AssemblyResolver(ModuleDefMD module) => this.module = module;
 
 		public void Find(ISimpleDeobfuscator simpleDeobfuscator) {
 			var cctor = DotNetUtils.GetModuleTypeCctor(module);

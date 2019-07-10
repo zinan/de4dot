@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -29,13 +29,8 @@ namespace de4dot.code.deobfuscators.CodeVeil {
 		TypeDef tamperDetectionType;
 		List<MethodDef> tamperDetectionMethods = new List<MethodDef>();
 
-		public TypeDef Type {
-			get { return tamperDetectionType; }
-		}
-
-		public List<MethodDef> Methods {
-			get { return tamperDetectionMethods; }
-		}
+		public TypeDef Type => tamperDetectionType;
+		public List<MethodDef> Methods => tamperDetectionMethods;
 
 		public TamperDetection(ModuleDefMD module, MainType mainType) {
 			this.module = module;

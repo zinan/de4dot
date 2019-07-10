@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -30,25 +30,14 @@ namespace de4dot.blocks {
 		ITypeDefOrRef catchType;
 		ExceptionHandlerType handlerType;
 
-		public ITypeDefOrRef CatchType {
-			get { return catchType; }
-		}
-
-		public ExceptionHandlerType HandlerType {
-			get { return handlerType; }
-		}
-
-		public FilterHandlerBlock FilterHandlerBlock {
-			get { return filterHandlerBlock; }
-		}
-
-		public HandlerBlock HandlerBlock {
-			get { return handlerBlock; }
-		}
+		public ITypeDefOrRef CatchType => catchType;
+		public ExceptionHandlerType HandlerType => handlerType;
+		public FilterHandlerBlock FilterHandlerBlock => filterHandlerBlock;
+		public HandlerBlock HandlerBlock => handlerBlock;
 
 		public TryHandlerBlock(ExceptionHandler handler) {
-			this.catchType = handler.CatchType;
-			this.handlerType = handler.HandlerType;
+			catchType = handler.CatchType;
+			handlerType = handler.HandlerType;
 		}
 	}
 }

@@ -1,3 +1,0 @@
-[submodule "dnlib"]
-	path = dnlib
-	url = git@github.com:0xd4d/dnlib.git

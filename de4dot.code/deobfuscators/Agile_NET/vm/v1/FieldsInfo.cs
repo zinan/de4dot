@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -50,19 +50,14 @@ namespace de4dot.code.deobfuscators.Agile_NET.vm.v1 {
 			}
 		}
 
-		void Add(TypeSig type) {
-			Add(type.GetFullName());
-		}
+		void Add(TypeSig type) => Add(type.GetFullName());
 
 		void Add(string typeFullName) {
-			int count;
-			fieldTypes.TryGetValue(typeFullName, out count);
+			fieldTypes.TryGetValue(typeFullName, out int count);
 			fieldTypes[typeFullName] = count + 1;
 		}
 
-		void AddEnum() {
-			numEnums++;
-		}
+		void AddEnum() => numEnums++;
 
 		public bool IsSame(FieldsInfo other) {
 			if (numEnums != other.numEnums)
@@ -70,8 +65,7 @@ namespace de4dot.code.deobfuscators.Agile_NET.vm.v1 {
 			if (fieldTypes.Count != other.fieldTypes.Count)
 				return false;
 			foreach (var kv in fieldTypes) {
-				int num;
-				if (!other.fieldTypes.TryGetValue(kv.Key, out num))
+				if (!other.fieldTypes.TryGetValue(kv.Key, out int num))
 					return false;
 				if (kv.Value != num)
 					return false;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -83,9 +83,7 @@ namespace de4dot.blocks.cflow {
 			return true;
 		}
 
-		bool Emulate_Br() {
-			return EmulateBranch(0, true);
-		}
+		bool Emulate_Br() => EmulateBranch(0, true);
 
 		bool Emulate_Beq() {
 			var val2 = instructionEmulator.Pop();

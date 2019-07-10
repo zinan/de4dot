@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -93,8 +93,6 @@ namespace AssemblyData.methodsrewriter {
 			}
 		}
 
-		public override string ToString() {
-			return string.Format("{0:X8} - {1}", typeDef.MDToken.Raw, typeDef.FullName);
-		}
+		public override string ToString() => $"{typeDef.MDToken.Raw:X8} - {typeDef.FullName}";
 	}
 }

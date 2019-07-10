@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -37,20 +37,15 @@ namespace de4dot.code.deobfuscators.Agile_NET.vm {
 			this.module = module;
 		}
 
-		protected void SetCilToVmIndex(Instruction instr, int vmIndex) {
-			cilToVmIndex[instr] = vmIndex;
-		}
-
-		protected void SetVmIndexToCil(Instruction instr, int vmIndex) {
-			vmIndexToCil[vmIndex] = instr;
-		}
+		protected void SetCilToVmIndex(Instruction instr, int vmIndex) => cilToVmIndex[instr] = vmIndex;
+		protected void SetVmIndexToCil(Instruction instr, int vmIndex) => vmIndexToCil[vmIndex] = instr;
 
 		public void Convert(MethodDef cilMethod, CsvmMethodData csvmMethod) {
 			cilToVmIndex.Clear();
 			vmIndexToCil.Clear();
 
 			var newInstructions = ReadInstructions(cilMethod, csvmMethod);
-			var newLocals = ReadLocals(cilMethod, csvmMethod);
+			/*var newLocals =*/ ReadLocals(cilMethod, csvmMethod);
 			var newExceptions = ReadExceptions(cilMethod, csvmMethod);
 
 			FixInstructionOperands(newInstructions);
@@ -318,14 +313,11 @@ namespace de4dot.code.deobfuscators.Agile_NET.vm {
 			return ehs;
 		}
 
-		Instruction GetInstruction(int vmIndex) {
-			return vmIndexToCil[vmIndex];
-		}
+		Instruction GetInstruction(int vmIndex) => vmIndexToCil[vmIndex];
 
 		Instruction GetInstructionEnd(int vmIndex) {
 			vmIndex++;
-			Instruction instr;
-			vmIndexToCil.TryGetValue(vmIndex, out instr);
+			vmIndexToCil.TryGetValue(vmIndex, out var instr);
 			return instr;
 		}
 
@@ -336,8 +328,7 @@ namespace de4dot.code.deobfuscators.Agile_NET.vm {
 
 		void FixInstructionOperands(IList<Instruction> instrs) {
 			foreach (var instr in instrs) {
-				var op = instr.Operand as IVmOperand;
-				if (op != null)
+				if (instr.Operand is IVmOperand op)
 					instr.Operand = FixOperand(instrs, instr, op);
 			}
 		}
@@ -348,7 +339,7 @@ namespace de4dot.code.deobfuscators.Agile_NET.vm {
 
 			if (vmOperand is SwitchTargetDisplOperand) {
 				var targetDispls = ((SwitchTargetDisplOperand)vmOperand).TargetDisplacements;
-				Instruction[] targets = new Instruction[targetDispls.Length];
+				var targets = new Instruction[targetDispls.Length];
 				for (int i = 0; i < targets.Length; i++)
 					targets[i] = GetInstruction(instr, targetDispls[i]);
 				return targets;
@@ -357,12 +348,10 @@ namespace de4dot.code.deobfuscators.Agile_NET.vm {
 			if (vmOperand is ArgOperand || vmOperand is LocalOperand)
 				return vmOperand;
 
-			if (vmOperand is FieldInstructionOperand) {
-				var fieldInfo = (FieldInstructionOperand)vmOperand;
+			if (vmOperand is FieldInstructionOperand fieldInfo)
 				return FixLoadStoreFieldInstruction(instr, fieldInfo.Field, fieldInfo.StaticOpCode, fieldInfo.InstanceOpCode);
-			}
 
-			throw new ApplicationException(string.Format("Unknown operand type: {0}", vmOperand.GetType()));
+			throw new ApplicationException($"Unknown operand type: {vmOperand.GetType()}");
 		}
 
 		IField FixLoadStoreFieldInstruction(Instruction instr, IField fieldRef, OpCode staticInstr, OpCode instanceInstr) {

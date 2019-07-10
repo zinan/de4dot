@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 
 namespace de4dot.code.renamer {
-	abstract class TypeNames {
+	public abstract class TypeNames {
 		protected Dictionary<string, NameCreator> typeNames = new Dictionary<string, NameCreator>(StringComparer.Ordinal);
 		protected NameCreator genericParamNameCreator = new NameCreator("gparam_");
 		protected NameCreator fnPtrNameCreator = new NameCreator("fnptr_");
@@ -34,8 +34,7 @@ namespace de4dot.code.renamer {
 			typeRef = typeRef.RemovePinnedAndModifiers();
 			if (typeRef == null)
 				return unknownNameCreator.Create();
-			var gis = typeRef as GenericInstSig;
-			if (gis != null) {
+			if (typeRef is GenericInstSig gis) {
 				if (gis.FullName == "System.Nullable`1" &&
 					gis.GenericArguments.Count == 1 && gis.GenericArguments[0] != null) {
 					typeRef = gis.GenericArguments[0];
@@ -50,15 +49,13 @@ namespace de4dot.code.renamer {
 			if (IsGenericParam(elementType))
 				return genericParamNameCreator.Create();
 
-			NameCreator nc;
 			var typeFullName = typeRef.FullName;
-			if (typeNames.TryGetValue(typeFullName, out nc))
+			if (typeNames.TryGetValue(typeFullName, out var nc))
 				return nc.Create();
 
 			var fullName = elementType == null ? typeRef.FullName : elementType.FullName;
-			string shortName;
 			var dict = prefix == "" ? fullNameToShortName : fullNameToShortNamePrefix;
-			if (!dict.TryGetValue(fullName, out shortName)) {
+			if (!dict.TryGetValue(fullName, out string shortName)) {
 				fullName = fullName.Replace('/', '.');
 				int index = fullName.LastIndexOf('.');
 				shortName = index > 0 ? fullName.Substring(index + 1) : fullName;
@@ -102,8 +99,7 @@ namespace de4dot.code.renamer {
 			newName = FixName(prefix, newName);
 
 			var name2 = " " + newName;
-			NameCreator nc;
-			if (!typeNames.TryGetValue(name2, out nc))
+			if (!typeNames.TryGetValue(name2, out var nc))
 				typeNames[name2] = nc = new NameCreator(newName + "_");
 
 			typeNames[fullName] = nc;
@@ -116,8 +112,7 @@ namespace de4dot.code.renamer {
 			if (this == other)
 				return this;
 			foreach (var pair in other.typeNames) {
-				NameCreator nc;
-				if (typeNames.TryGetValue(pair.Key, out nc))
+				if (typeNames.TryGetValue(pair.Key, out var nc))
 					nc.Merge(pair.Value);
 				else
 					typeNames[pair.Key] = pair.Value.Clone();
@@ -135,7 +130,7 @@ namespace de4dot.code.renamer {
 		}
 	}
 
-	class VariableNameCreator : TypeNames {
+	public class VariableNameCreator : TypeNames {
 		static Dictionary<string, string> ourFullNameToShortName;
 		static Dictionary<string, string> ourFullNameToShortNamePrefix;
 		static VariableNameCreator() {
@@ -201,7 +196,7 @@ namespace de4dot.code.renamer {
 		}
 	}
 
-	class PropertyNameCreator : TypeNames {
+	public class PropertyNameCreator : TypeNames {
 		static Dictionary<string, string> ourFullNameToShortName = new Dictionary<string, string>(StringComparer.Ordinal);
 		static Dictionary<string, string> ourFullNameToShortNamePrefix = new Dictionary<string, string>(StringComparer.Ordinal);
 
@@ -210,8 +205,6 @@ namespace de4dot.code.renamer {
 			fullNameToShortNamePrefix = ourFullNameToShortNamePrefix;
 		}
 
-		protected override string FixName(string prefix, string name) {
-			return prefix.ToUpperInvariant() + UpperFirst(name);
-		}
+		protected override string FixName(string prefix, string name) => prefix.ToUpperInvariant() + UpperFirst(name);
 	}
 }

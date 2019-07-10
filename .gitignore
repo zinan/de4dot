@@ -1,8 +1,8 @@
 *~
-*/obj/
-*.csproj.user
-*.sdf
-*.opensdf
-*.suo
-/Debug/
-/Release/
+.vs/
+bin/
+obj/
+Release/
+Debug/
+launchSettings.json
+*.user

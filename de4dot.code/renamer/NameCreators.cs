@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -19,26 +19,19 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
-using de4dot.blocks;
 
 namespace de4dot.code.renamer {
-	interface INameCreator {
+	public interface INameCreator {
 		string Create();
 	}
 
-	class OneNameCreator : INameCreator {
+	public class OneNameCreator : INameCreator {
 		string name;
-
-		public OneNameCreator(string name) {
-			this.name = name;
-		}
-
-		public string Create() {
-			return name;
-		}
+		public OneNameCreator(string name) => this.name = name;
+		public string Create() => name;
 	}
 
-	abstract class NameCreatorCounter : INameCreator {
+	public abstract class NameCreatorCounter : INameCreator {
 		protected int num;
 
 		public abstract string Create();
@@ -50,39 +43,32 @@ namespace de4dot.code.renamer {
 		}
 	}
 
-	class GenericParamNameCreator : NameCreatorCounter {
+	public class GenericParamNameCreator : NameCreatorCounter {
 		static string[] names = new string[] { "T", "U", "V", "W", "X", "Y", "Z" };
 
 		public override string Create() {
 			if (num < names.Length)
 				return names[num++];
-			return string.Format("T{0}", num++);
+			return $"T{num++}";
 		}
 	}
 
-	class NameCreator : NameCreatorCounter {
+	public class NameCreator : NameCreatorCounter {
 		string prefix;
 
-		public NameCreator(string prefix)
-			: this(prefix, 0) {
-		}
+		public NameCreator(string prefix) : this(prefix, 0) { }
 
 		public NameCreator(string prefix, int num) {
 			this.prefix = prefix;
 			this.num = num;
 		}
 
-		public NameCreator Clone() {
-			return new NameCreator(prefix, num);
-		}
-
-		public override string Create() {
-			return prefix + num++;
-		}
+		public NameCreator Clone() => new NameCreator(prefix, num);
+		public override string Create() => prefix + num++;
 	}
 
 	// Like NameCreator but don't add the counter the first time
-	class NameCreator2 : NameCreatorCounter {
+	public class NameCreator2 : NameCreatorCounter {
 		string prefix;
 		const string separator = "_";
 
@@ -106,11 +92,11 @@ namespace de4dot.code.renamer {
 		}
 	}
 
-	interface ITypeNameCreator {
+	public interface ITypeNameCreator {
 		string Create(TypeDef typeDef, string newBaseTypeName);
 	}
 
-	class NameInfos {
+	public class NameInfos {
 		IList<NameInfo> nameInfos = new List<NameInfo>();
 
 		class NameInfo {
@@ -122,9 +108,7 @@ namespace de4dot.code.renamer {
 			}
 		}
 
-		public void Add(string name, NameCreator nameCreator) {
-			nameInfos.Add(new NameInfo(name, nameCreator));
-		}
+		public void Add(string name, NameCreator nameCreator) => nameInfos.Add(new NameInfo(name, nameCreator));
 
 		public NameCreator Find(string typeName) {
 			foreach (var nameInfo in nameInfos) {
@@ -136,7 +120,7 @@ namespace de4dot.code.renamer {
 		}
 	}
 
-	class TypeNameCreator : ITypeNameCreator {
+	public class TypeNameCreator : ITypeNameCreator {
 		ExistingNames existingNames;
 		NameCreator createUnknownTypeName;
 		NameCreator createEnumName;
@@ -168,9 +152,7 @@ namespace de4dot.code.renamer {
 				nameInfos.Add(name, CreateNameCreator(name));
 		}
 
-		protected virtual NameCreator CreateNameCreator(string prefix) {
-			return new NameCreator(prefix);
-		}
+		protected virtual NameCreator CreateNameCreator(string prefix) => new NameCreator(prefix);
 
 		public string Create(TypeDef typeDef, string newBaseTypeName) {
 			var nameCreator = GetNameCreator(typeDef, newBaseTypeName);
@@ -205,13 +187,8 @@ namespace de4dot.code.renamer {
 		}
 	}
 
-	class GlobalTypeNameCreator : TypeNameCreator {
-		public GlobalTypeNameCreator(ExistingNames existingNames)
-			: base(existingNames) {
-		}
-
-		protected override NameCreator CreateNameCreator(string prefix) {
-			return base.CreateNameCreator("G" + prefix);
-		}
+	public class GlobalTypeNameCreator : TypeNameCreator {
+		public GlobalTypeNameCreator(ExistingNames existingNames) : base(existingNames) { }
+		protected override NameCreator CreateNameCreator(string prefix) => base.CreateNameCreator("G" + prefix);
 	}
 }

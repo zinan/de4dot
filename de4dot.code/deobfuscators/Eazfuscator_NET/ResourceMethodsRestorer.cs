@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -25,17 +25,9 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 		TypeDef getManifestResourceStreamType;
 		EmbeddedResource getManifestResourceStreamTypeResource;
 
-		public TypeDef Type {
-			get { return getManifestResourceStreamType; }
-		}
-
-		public Resource Resource {
-			get { return getManifestResourceStreamTypeResource; }
-		}
-
-		public ResourceMethodsRestorer(ModuleDefMD module)
-			: base(module) {
-		}
+		public TypeDef Type => getManifestResourceStreamType;
+		public Resource Resource => getManifestResourceStreamTypeResource;
+		public ResourceMethodsRestorer(ModuleDefMD module) : base(module) { }
 
 		public void Find(ISimpleDeobfuscator simpleDeobfuscator, IDeobfuscator deob) {
 			foreach (var type in module.Types) {
@@ -81,8 +73,7 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 				simpleDeobfuscator.Deobfuscate(method);
 				simpleDeobfuscator.DecryptStrings(method, deob);
 				foreach (var s in DotNetUtils.GetCodeStrings(method)) {
-					var resource = DotNetUtils.GetResource(module, s) as EmbeddedResource;
-					if (resource != null)
+					if (DotNetUtils.GetResource(module, s) is EmbeddedResource resource)
 						return resource;
 				}
 			}

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -39,18 +39,14 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 		ISimpleDeobfuscator simpleDeobfuscator;
 		IList<StringsEncoderInfo> stringsEncoderInfos = new List<StringsEncoderInfo>();
 
-		public IList<StringsEncoderInfo> StringsEncoderInfos {
-			get { return stringsEncoderInfos; }
-		}
+		public IList<StringsEncoderInfo> StringsEncoderInfos => stringsEncoderInfos;
 
 		public StringEncoderClassFinder(ModuleDefMD module, ISimpleDeobfuscator simpleDeobfuscator) {
 			this.module = module;
 			this.simpleDeobfuscator = simpleDeobfuscator;
 		}
 
-		TypeDef GetType(ITypeDefOrRef typeRef) {
-			return DotNetUtils.GetType(module, typeRef);
-		}
+		TypeDef GetType(ITypeDefOrRef typeRef) => DotNetUtils.GetType(module, typeRef);
 
 		public void Find() {
 			FindHouseOfCardsStrings_v2();

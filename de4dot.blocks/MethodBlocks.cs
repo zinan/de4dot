@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -16,8 +16,6 @@
     You should have received a copy of the GNU General Public License
     along with de4dot.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-using System.Collections.Generic;
 
 namespace de4dot.blocks {
 	// Start of a method

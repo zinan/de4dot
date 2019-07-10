@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -31,19 +31,12 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 		public byte[] DES_IV  { get; private set; }
 		public byte[] AES_Key { get; private set; }
 		public byte[] AES_IV  { get; private set; }
+		public bool CanDecrypt => simpleZipTypeDecryptMethod != null;
 
-		public bool CanDecrypt {
-			get { return simpleZipTypeDecryptMethod != null; }
-		}
-
-		public ResourceDecrypterInfo(ModuleDefMD module) {
-			this.module = module;
-		}
+		public ResourceDecrypterInfo(ModuleDefMD module) => this.module = module;
 
 		public ResourceDecrypterInfo(ModuleDefMD module, MethodDef simpleZipTypeDecryptMethod, ISimpleDeobfuscator simpleDeobfuscator)
-			: this(module) {
-			SetSimpleZipType(simpleZipTypeDecryptMethod, simpleDeobfuscator);
-		}
+			: this(module) => SetSimpleZipType(simpleZipTypeDecryptMethod, simpleDeobfuscator);
 
 		public void SetSimpleZipType(MethodDef method, ISimpleDeobfuscator simpleDeobfuscator) {
 			if (simpleZipTypeDecryptMethod != null || method == null)

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -59,9 +59,7 @@ namespace de4dot.code.deobfuscators.DeepSea {
 			return true;
 		}
 
-		public FieldsRestorer(ModuleDefMD module) {
-			this.module = module;
-		}
+		public FieldsRestorer(ModuleDefMD module) => this.module = module;
 
 		public void Initialize() {
 			foreach (var kv in GetMovedTypes()) {
@@ -112,8 +110,7 @@ namespace de4dot.code.deobfuscators.DeepSea {
 					if (!CheckFields(fieldType))
 						continue;
 
-					List<TypeDef> list;
-					if (!candidates.TryGetValue(fieldType, out list))
+					if (!candidates.TryGetValue(fieldType, out var list))
 						candidates[fieldType] = list = new List<TypeDef>();
 					list.Add(type);
 					typeToStruct[type] = fieldType;
@@ -122,8 +119,7 @@ namespace de4dot.code.deobfuscators.DeepSea {
 			}
 
 			foreach (var type in module.GetTypes()) {
-				TypeDef structType;
-				typeToStruct.TryGetValue(type, out structType);
+				typeToStruct.TryGetValue(type, out var structType);
 
 				foreach (var field in type.Fields) {
 					if (field.IsStatic || field.FieldSig.GetFieldType().TryGetTypeDef() != structType)
@@ -239,7 +235,7 @@ namespace de4dot.code.deobfuscators.DeepSea {
 		void FixFieldCtorCalls(Blocks blocks) {
 			if (blocks.Method.Name != ".ctor")
 				return;
-			var instrsToRemove = new List<int>();
+			//var instrsToRemove = new List<int>();
 			foreach (var block in blocks.MethodBlocks.GetAllBlocks()) {
 				var instrs = block.Instructions;
 				for (int i = 0; i < instrs.Count; i++) {
@@ -290,8 +286,7 @@ namespace de4dot.code.deobfuscators.DeepSea {
 				if (stack == 1 && instr.OpCode.Code == Code.Stfld)
 					return i;
 
-				int pushes, pops;
-				instr.Instruction.CalculateStackUsage(false, out pushes, out pops);
+				instr.Instruction.CalculateStackUsage(false, out int pushes, out int pops);
 				stack -= pops;
 				if (stack < 0)
 					break;

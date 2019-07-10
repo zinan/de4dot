@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -26,10 +26,9 @@ using de4dot.blocks;
 using de4dot.mdecrypt;
 
 namespace de4dot.code.deobfuscators {
-	static class MethodsDecrypter {
-		public static DumpedMethods Decrypt(ModuleDef module, byte[] moduleCctorBytes) {
-			return Decrypt(NewProcessAssemblyClientFactory.GetServerClrVersion(module), module.Location, moduleCctorBytes);
-		}
+	public static class MethodsDecrypter {
+		public static DumpedMethods Decrypt(ModuleDef module, byte[] moduleCctorBytes) =>
+			Decrypt(NewProcessAssemblyClientFactory.GetServerClrVersion(module), module.Location, moduleCctorBytes);
 
 		public static DumpedMethods Decrypt(ServerClrVersion serverVersion, string filename, byte[] moduleCctorBytes) {
 			Exception lastEx = null;

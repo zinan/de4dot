@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -22,7 +22,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace de4dot.code.deobfuscators {
-	static class RandomNameChecker {
+	public static class RandomNameChecker {
 		static Regex noUpper = new Regex(@"^[^A-Z]+$");
 		static Regex allUpper = new Regex(@"^[A-Z]+$");
 
@@ -116,8 +116,7 @@ namespace de4dot.code.deobfuscators {
 			if (CountNumbers(typeWords, 2))
 				return true;
 
-			int lower, upper, digits;
-			CountTypeWords(typeWords, out lower, out upper, out digits);
+			CountTypeWords(typeWords, out int lower, out int upper, out int digits);
 			if (upper >= 3)
 				return true;
 			bool hasTwoUpperWords = upper == 2;
@@ -218,16 +217,8 @@ namespace de4dot.code.deobfuscators {
 			}
 		}
 
-		static bool IsLower(char c) {
-			return 'a' <= c && c <= 'z';
-		}
-
-		static bool IsUpper(char c) {
-			return 'A' <= c && c <= 'Z';
-		}
-
-		static bool IsDigit(char c) {
-			return '0' <= c && c <= '9';
-		}
+		static bool IsLower(char c) => 'a' <= c && c <= 'z';
+		static bool IsUpper(char c) => 'A' <= c && c <= 'Z';
+		static bool IsDigit(char c) => '0' <= c && c <= '9';
 	}
 }

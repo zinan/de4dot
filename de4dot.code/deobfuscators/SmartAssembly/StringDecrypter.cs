@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -24,12 +24,8 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 	class StringDecrypter {
 		int stringOffset;
 		byte[] decryptedData;
-		StringDecrypterVersion stringDecrypterVersion;
 
-		public bool CanDecrypt {
-			get { return decryptedData != null; }
-		}
-
+		public bool CanDecrypt => decryptedData != null;
 		public StringDecrypterInfo StringDecrypterInfo { get; private set; }
 
 		public StringDecrypter(StringDecrypterInfo stringDecrypterInfo) {
@@ -38,14 +34,12 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 			if (stringDecrypterInfo != null) {
 				if (!stringDecrypterInfo.StringsEncrypted) {
 					stringOffset = stringDecrypterInfo.StringOffset;
-					decryptedData = stringDecrypterInfo.StringsResource.GetResourceData();
+					decryptedData = stringDecrypterInfo.StringsResource.CreateReader().ToArray();
 				}
 				else if (stringDecrypterInfo.CanDecrypt) {
 					stringOffset = stringDecrypterInfo.StringOffset;
 					decryptedData = stringDecrypterInfo.Decrypt();
 				}
-
-				stringDecrypterVersion = StringDecrypterInfo.DecrypterVersion;
 			}
 		}
 

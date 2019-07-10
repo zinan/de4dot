@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -20,7 +20,7 @@
 using System;
 
 namespace de4dot.code.deobfuscators {
-	class Blowfish {
+	public class Blowfish {
 		static readonly uint[] Pboxes = new uint[18] {
 			0x243F6A88, 0x85A308D3, 0x13198A2E, 0x03707344,
 			0xA4093822, 0x299F31D0, 0x082EFA98, 0xEC4E6C89,
@@ -290,12 +290,8 @@ namespace de4dot.code.deobfuscators {
 		protected readonly uint[] P = new uint[18];
 		protected readonly uint[] S = new uint[1024];
 
-		public Blowfish() {
-		}
-
-		public Blowfish(byte[] key) {
-			Initialize(key);
-		}
+		public Blowfish() { }
+		public Blowfish(byte[] key) => Initialize(key);
 
 		public void Initialize(byte[] key) {
 			Array.Copy(Sboxes, S, S.Length);

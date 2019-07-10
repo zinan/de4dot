@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -88,7 +88,7 @@ namespace de4dot.blocks {
 		static void WriteMethodBase(StackFrame frame, MethodBase method) {
 			methodField.SetValue(frame, method);
 			if (frame.GetMethod() != method)
-				throw new ApplicationException(string.Format("Could not set new method: {0}", method));
+				throw new ApplicationException($"Could not set new method: {method}");
 		}
 	}
 }

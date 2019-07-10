@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -94,9 +94,7 @@ namespace de4dot.code.deobfuscators.Babel_NET {
 			return method.IsStatic;
 		}
 
-		bool CanInline2(MethodDef method) {
-			return CanInline(method) && method != blocks.Method;
-		}
+		bool CanInline2(MethodDef method) => CanInline(method) && method != blocks.Method;
 
 		bool InlineMethod(Instruction callInstr, int instrIndex) {
 			var methodToInline = callInstr.Operand as MethodDef;
@@ -115,8 +113,7 @@ namespace de4dot.code.deobfuscators.Babel_NET {
 			var ldci4 = block.Instructions[instrIndex - 1];
 			if (!ldci4.IsLdcI4())
 				return false;
-			int newValue;
-			if (!GetNewValue(methodToInline, ldci4.GetLdcI4Value(), out newValue))
+			if (!GetNewValue(methodToInline, ldci4.GetLdcI4Value(), out int newValue))
 				return false;
 
 			block.Instructions[instrIndex - 1] = new Instr(OpCodes.Nop.ToInstruction());

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -27,21 +27,10 @@ namespace de4dot.code.deobfuscators.dotNET_Reactor.v3 {
 		AssemblyResolver assemblyResolver;
 		MemoryPatcher memoryPatcher;
 
-		public byte[] AssemblyKey {
-			get { return assemblyResolver.Key; }
-		}
-
-		public byte[] AssemblyIv {
-			get { return assemblyResolver.Iv; }
-		}
-
-		public MemoryPatcher MemoryPatcher {
-			get { return memoryPatcher; }
-		}
-
-		public bool Detected {
-			get { return assemblyResolver != null; }
-		}
+		public byte[] AssemblyKey => assemblyResolver.Key;
+		public byte[] AssemblyIv => assemblyResolver.Iv;
+		public MemoryPatcher MemoryPatcher => memoryPatcher;
+		public bool Detected => assemblyResolver != null;
 
 		public ApplicationModeDecrypter(ModuleDefMD module) {
 			this.module = module;

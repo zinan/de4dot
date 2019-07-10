@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -20,18 +20,14 @@
 using dnlib.DotNet;
 
 namespace de4dot.code.renamer.asmmodules {
-	class MParamDef {
+	public class MParamDef {
 		public Parameter ParameterDef { get; set; }
 		public int Index { get; private set; }
-		public bool IsReturnParameter {
-			get { return ParameterDef.IsReturnTypeParameter; }
-		}
-		public bool IsHiddenThisParameter {
-			get { return ParameterDef.IsHiddenThisParameter; }
-		}
+		public bool IsReturnParameter => ParameterDef.IsReturnTypeParameter;
+		public bool IsHiddenThisParameter => ParameterDef.IsHiddenThisParameter;
 
 		public MParamDef(Parameter parameterDef, int index) {
-			this.ParameterDef = parameterDef;
+			ParameterDef = parameterDef;
 			Index = index;
 		}
 	}

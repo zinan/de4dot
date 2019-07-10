@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -25,9 +25,7 @@ namespace de4dot.code.deobfuscators.CryptoObfuscator {
 		readonly InlinedMethodTypes inlinedMethodTypes;
 
 		public CoMethodCallInliner(InlinedMethodTypes inlinedMethodTypes)
-			: base(false) {
-			this.inlinedMethodTypes = inlinedMethodTypes;
-		}
+			: base(false) => this.inlinedMethodTypes = inlinedMethodTypes;
 
 		protected override bool CanInline(MethodDef method) {
 			if (method == null)

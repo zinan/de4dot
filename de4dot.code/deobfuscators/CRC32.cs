@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -18,7 +18,7 @@
 */
 
 namespace de4dot.code.deobfuscators {
-	struct CRC32 {
+	public struct CRC32 {
 		static readonly uint[] table = new uint[256] {
 			0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA,
 			0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
@@ -88,9 +88,7 @@ namespace de4dot.code.deobfuscators {
 
 		uint checkSum;
 
-		public void Initialize() {
-			this.checkSum = uint.MaxValue;
-		}
+		public void Initialize() => checkSum = uint.MaxValue;
 
 		public void Hash(byte[] data) {
 			if (data == null)
@@ -207,9 +205,7 @@ namespace de4dot.code.deobfuscators {
 			checkSum = (checkSum >> 8) ^ table[i];
 		}
 
-		public uint GetHash() {
-			return ~checkSum;
-		}
+		public uint GetHash() => ~checkSum;
 
 		public static uint CheckSum(byte[] data) {
 			if (data == null)

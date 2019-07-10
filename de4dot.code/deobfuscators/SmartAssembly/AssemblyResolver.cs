@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -31,9 +31,7 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 			this.assemblyResolverInfo = assemblyResolverInfo;
 		}
 
-		public bool ResolveResources() {
-			return assemblyResolverInfo.ResolveResources();
-		}
+		public bool ResolveResources() => assemblyResolverInfo.ResolveResources();
 
 		public bool CanDecryptResource(EmbeddedAssemblyInfo info) {
 			if (info == null || !info.isCompressed)
@@ -65,7 +63,7 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 
 			var data = DecryptResource(info);
 			if (!assemblyResolverInfo.RemoveEmbeddedAssemblyInfo(info))
-				throw new ApplicationException(string.Format("Could not remove resource {0}", Utils.ToCsharpString(info.resourceName)));
+				throw new ApplicationException($"Could not remove resource {Utils.ToCsharpString(info.resourceName)}");
 			return data;
 		}
 
@@ -73,7 +71,7 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 			if (info.isCompressed)
 				return resourceDecrypter.Decrypt(info.resource);
 			else
-				return info.resource.GetResourceData();
+				return info.resource.CreateReader().ToArray();
 		}
 	}
 }

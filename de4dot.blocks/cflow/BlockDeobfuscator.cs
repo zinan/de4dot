@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -27,9 +27,7 @@ namespace de4dot.blocks.cflow {
 
 		public bool ExecuteIfNotModified { get; set; }
 
-		public virtual void DeobfuscateBegin(Blocks blocks) {
-			this.blocks = blocks;
-		}
+		public virtual void DeobfuscateBegin(Blocks blocks) => this.blocks = blocks;
 
 		public bool Deobfuscate(List<Block> allBlocks) {
 			Initialize(allBlocks);
@@ -46,10 +44,7 @@ namespace de4dot.blocks.cflow {
 			return modified;
 		}
 
-		protected virtual void Initialize(List<Block> allBlocks) {
-			this.allBlocks = allBlocks;
-		}
-
+		protected virtual void Initialize(List<Block> allBlocks) => this.allBlocks = allBlocks;
 		protected abstract bool Deobfuscate(Block block);
 	}
 }

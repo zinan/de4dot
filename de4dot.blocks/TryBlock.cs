@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -27,12 +27,7 @@ namespace de4dot.blocks {
 		// image in the same order they're saved here.
 		List<TryHandlerBlock> handlerBlocks = new List<TryHandlerBlock>();
 
-		public List<TryHandlerBlock> TryHandlerBlocks {
-			get { return handlerBlocks; }
-		}
-
-		public void AddTryHandler(TryHandlerBlock tryHandlerBlock) {
-			handlerBlocks.Add(tryHandlerBlock);
-		}
+		public List<TryHandlerBlock> TryHandlerBlocks => handlerBlocks;
+		public void AddTryHandler(TryHandlerBlock tryHandlerBlock) => handlerBlocks.Add(tryHandlerBlock);
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -26,21 +26,10 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 		TypeDef memoryManagerType;
 		MethodDef attachAppMethod;
 
-		public bool Detected {
-			get { return memoryManagerType != null; }
-		}
-
-		public TypeDef Type {
-			get { return memoryManagerType; }
-		}
-
-		public MethodDef CctorInitMethod {
-			get { return attachAppMethod; }
-		}
-
-		public MemoryManagerInfo(ModuleDefMD module) {
-			this.module = module;
-		}
+		public bool Detected => memoryManagerType != null;
+		public TypeDef Type => memoryManagerType;
+		public MethodDef CctorInitMethod => attachAppMethod;
+		public MemoryManagerInfo(ModuleDefMD module) => this.module = module;
 
 		public bool Find() {
 			if (CheckCalledMethods(DotNetUtils.GetModuleTypeCctor(module)))

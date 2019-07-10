@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -26,7 +26,7 @@ using dnlib.DotNet.Emit;
 using de4dot.blocks;
 
 namespace de4dot.code.deobfuscators {
-	class InitializedDataCreator {
+	public class InitializedDataCreator {
 		ModuleDef module;
 		Dictionary<long, TypeDef> sizeToArrayType = new Dictionary<long, TypeDef>();
 		TypeDef ourType;
@@ -34,13 +34,8 @@ namespace de4dot.code.deobfuscators {
 		int unique = 0;
 		MemberRef initializeArrayMethod;
 
-		public MemberRef InitializeArrayMethod {
-			get { return CreateInitializeArrayMethod(); }
-		}
-
-		public InitializedDataCreator(ModuleDef module) {
-			this.module = module;
-		}
+		public MemberRef InitializeArrayMethod => CreateInitializeArrayMethod();
+		public InitializedDataCreator(ModuleDef module) => this.module = module;
 
 		MemberRef CreateInitializeArrayMethod() {
 			if (initializeArrayMethod == null) {
@@ -66,7 +61,7 @@ namespace de4dot.code.deobfuscators {
 			if (ourType != null)
 				return;
 
-			ourType = new TypeDefUser("", string.Format("<PrivateImplementationDetails>{0}", GetModuleId()), module.CorLibTypes.Object.TypeDefOrRef);
+			ourType = new TypeDefUser("", $"<PrivateImplementationDetails>{GetModuleId()}", module.CorLibTypes.Object.TypeDefOrRef);
 			ourType.Attributes = TypeAttributes.NotPublic | TypeAttributes.AutoLayout |
 							TypeAttributes.Class | TypeAttributes.AnsiClass;
 			module.UpdateRowId(ourType);
@@ -91,13 +86,12 @@ namespace de4dot.code.deobfuscators {
 		TypeDef GetArrayType(long size) {
 			CreateOurType();
 
-			TypeDef arrayType;
-			if (sizeToArrayType.TryGetValue(size, out arrayType))
+			if (sizeToArrayType.TryGetValue(size, out var arrayType))
 				return arrayType;
 
 			if (valueType == null)
 				valueType = DotNetUtils.FindOrCreateTypeRef(module, module.CorLibTypes.AssemblyRef, "System", "ValueType", false);
-			arrayType = new TypeDefUser("", string.Format("__StaticArrayInitTypeSize={0}", size), valueType.TypeDefOrRef);
+			arrayType = new TypeDefUser("", $"__StaticArrayInitTypeSize={size}", valueType.TypeDefOrRef);
 			module.UpdateRowId(arrayType);
 			arrayType.Attributes = TypeAttributes.NestedPrivate | TypeAttributes.ExplicitLayout |
 							TypeAttributes.Class | TypeAttributes.Sealed | TypeAttributes.AnsiClass;
@@ -111,7 +105,7 @@ namespace de4dot.code.deobfuscators {
 			var arrayType = GetArrayType(data.LongLength);
 			var fieldSig = new FieldSig(new ValueTypeSig(arrayType));
 			var attrs = FieldAttributes.Assembly | FieldAttributes.Static;
-			var field = new FieldDefUser(string.Format("field_{0}", unique++), fieldSig, attrs);
+			var field = new FieldDefUser($"field_{unique++}", fieldSig, attrs);
 			module.UpdateRowId(field);
 			field.HasFieldRVA = true;
 			ourType.Fields.Add(field);

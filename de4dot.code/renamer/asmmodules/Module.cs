@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -20,10 +20,9 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
-using de4dot.blocks;
 
 namespace de4dot.code.renamer.asmmodules {
-	class Module : IResolver {
+	public class Module : IResolver {
 		IObfuscatedFile obfuscatedFile;
 		TypeDefDict types = new TypeDefDict();
 		MemberRefFinder memberRefFinder;
@@ -54,57 +53,26 @@ namespace de4dot.code.renamer.asmmodules {
 			}
 		}
 
-		public IEnumerable<RefToDef<TypeRef, TypeDef>> TypeRefsToRename {
-			get { return typeRefsToRename; }
-		}
+		public IEnumerable<RefToDef<TypeRef, TypeDef>> TypeRefsToRename => typeRefsToRename;
+		public IEnumerable<RefToDef<MemberRef, MethodDef>> MethodRefsToRename => methodRefsToRename;
+		public IEnumerable<RefToDef<MemberRef, FieldDef>> FieldRefsToRename => fieldRefsToRename;
+		public IEnumerable<CustomAttributeRef> CustomAttributeFieldRefs => customAttributeFieldRefs;
+		public IEnumerable<CustomAttributeRef> CustomAttributePropertyRefs => customAttributePropertyRefs;
+		public IObfuscatedFile ObfuscatedFile => obfuscatedFile;
+		public string Filename => obfuscatedFile.Filename;
+		public ModuleDefMD ModuleDefMD => obfuscatedFile.ModuleDefMD;
+		public Module(IObfuscatedFile obfuscatedFile) => this.obfuscatedFile = obfuscatedFile;
 
-		public IEnumerable<RefToDef<MemberRef, MethodDef>> MethodRefsToRename {
-			get { return methodRefsToRename; }
-		}
-
-		public IEnumerable<RefToDef<MemberRef, FieldDef>> FieldRefsToRename {
-			get { return fieldRefsToRename; }
-		}
-
-		public IEnumerable<CustomAttributeRef> CustomAttributeFieldRefs {
-			get { return customAttributeFieldRefs; }
-		}
-
-		public IEnumerable<CustomAttributeRef> CustomAttributePropertyRefs {
-			get { return customAttributePropertyRefs; }
-		}
-
-		public IObfuscatedFile ObfuscatedFile {
-			get { return obfuscatedFile; }
-		}
-
-		public string Filename {
-			get { return obfuscatedFile.Filename; }
-		}
-
-		public ModuleDefMD ModuleDefMD {
-			get { return obfuscatedFile.ModuleDefMD; }
-		}
-
-		public Module(IObfuscatedFile obfuscatedFile) {
-			this.obfuscatedFile = obfuscatedFile;
-		}
-
-		public IEnumerable<MTypeDef> GetAllTypes() {
-			return types.GetValues();
-		}
-
-		public IEnumerable<MethodDef> GetAllMethods() {
-			return allMethods;
-		}
+		public IEnumerable<MTypeDef> GetAllTypes() => types.GetValues();
+		public IEnumerable<MethodDef> GetAllMethods() => allMethods;
 
 		public void FindAllMemberRefs(ref int typeIndex) {
 			memberRefFinder = new MemberRefFinder();
 			memberRefFinder.FindAll(ModuleDefMD);
-			allMethods = new List<MethodDef>(memberRefFinder.methodDefs.Keys);
+			allMethods = new List<MethodDef>(memberRefFinder.MethodDefs.Keys);
 
 			var allTypesList = new List<MTypeDef>();
-			foreach (var type in memberRefFinder.typeDefs.Keys) {
+			foreach (var type in memberRefFinder.TypeDefs.Keys) {
 				var typeDef = new MTypeDef(type, this, typeIndex++);
 				types.Add(typeDef);
 				allTypesList.Add(typeDef);
@@ -131,13 +99,13 @@ namespace de4dot.code.renamer.asmmodules {
 		}
 
 		public void ResolveAllRefs(IResolver resolver) {
-			foreach (var typeRef in memberRefFinder.typeRefs.Keys) {
+			foreach (var typeRef in memberRefFinder.TypeRefs.Keys) {
 				var typeDef = resolver.ResolveType(typeRef);
 				if (typeDef != null)
 					typeRefsToRename.Add(new RefToDef<TypeRef, TypeDef>(typeRef, typeDef.TypeDef));
 			}
 
-			foreach (var memberRef in memberRefFinder.memberRefs.Keys) {
+			foreach (var memberRef in memberRefFinder.MemberRefs.Keys) {
 				if (memberRef.IsMethodRef) {
 					var methodDef = resolver.ResolveMethod(memberRef);
 					if (methodDef != null)
@@ -150,7 +118,7 @@ namespace de4dot.code.renamer.asmmodules {
 				}
 			}
 
-			foreach (var cattr in memberRefFinder.customAttributes.Keys) {
+			foreach (var cattr in memberRefFinder.CustomAttributes.Keys) {
 				var typeDef = resolver.ResolveType(cattr.AttributeType);
 				if (typeDef == null)
 					continue;
@@ -240,19 +208,17 @@ namespace de4dot.code.renamer.asmmodules {
 			return gis.GenericType.TypeDefOrRef;
 		}
 
-		public MTypeDef ResolveType(ITypeDefOrRef typeRef) {
-			return this.types.Find(GetNonGenericTypeRef(typeRef));
-		}
+		public MTypeDef ResolveType(ITypeDefOrRef typeRef) => types.Find(GetNonGenericTypeRef(typeRef));
 
 		public MMethodDef ResolveMethod(IMethodDefOrRef methodRef) {
-			var typeDef = this.types.Find(GetNonGenericTypeRef(methodRef.DeclaringType));
+			var typeDef = types.Find(GetNonGenericTypeRef(methodRef.DeclaringType));
 			if (typeDef == null)
 				return null;
 			return typeDef.FindMethod(methodRef);
 		}
 
 		public MFieldDef ResolveField(MemberRef fieldRef) {
-			var typeDef = this.types.Find(GetNonGenericTypeRef(fieldRef.DeclaringType));
+			var typeDef = types.Find(GetNonGenericTypeRef(fieldRef.DeclaringType));
 			if (typeDef == null)
 				return null;
 			return typeDef.FindField(fieldRef);

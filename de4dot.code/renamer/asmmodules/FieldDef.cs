@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -20,13 +20,8 @@
 using dnlib.DotNet;
 
 namespace de4dot.code.renamer.asmmodules {
-	class MFieldDef : Ref {
-		public FieldDef FieldDef {
-			get { return (FieldDef)memberRef; }
-		}
-
-		public MFieldDef(FieldDef fieldDef, MTypeDef owner, int index)
-			: base(fieldDef, owner, index) {
-		}
+	public class MFieldDef : Ref {
+		public FieldDef FieldDef => (FieldDef)memberRef;
+		public MFieldDef(FieldDef fieldDef, MTypeDef owner, int index) : base(fieldDef, owner, index) { }
 	}
 }

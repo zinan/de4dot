@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -93,8 +93,7 @@ namespace de4dot.code.deobfuscators.CryptoObfuscator {
 		}
 
 		public void DontRemoveType(TypeDef type) {
-			TypeFlags flags;
-			types.TryGetValue(type, out flags);
+			types.TryGetValue(type, out var flags);
 			flags |= TypeFlags.DontRemoveType;
 			types[type] = flags;
 		}

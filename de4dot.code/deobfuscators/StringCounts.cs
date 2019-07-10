@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -23,20 +23,14 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
 namespace de4dot.code.deobfuscators {
-	class StringCounts {
+	public class StringCounts {
 		Dictionary<string, int> strings = new Dictionary<string, int>(StringComparer.Ordinal);
 
-		public IEnumerable<string> Strings {
-			get { return strings.Keys; }
-		}
-
-		public int NumStrings {
-			get { return strings.Count; }
-		}
+		public IEnumerable<string> Strings => strings.Keys;
+		public int NumStrings => strings.Count;
 
 		public void Add(string s) {
-			int count;
-			strings.TryGetValue(s, out count);
+			strings.TryGetValue(s, out int count);
 			strings[s] = count + 1;
 		}
 
@@ -54,25 +48,17 @@ namespace de4dot.code.deobfuscators {
 			return true;
 		}
 
-		public bool Exactly(IList<string> list) {
-			return list.Count == strings.Count && All(list);
-		}
+		public bool Exactly(IList<string> list) => list.Count == strings.Count && All(list);
 
 		public int Count(string s) {
-			int count;
-			strings.TryGetValue(s, out count);
+			strings.TryGetValue(s, out int count);
 			return count;
 		}
 	}
 
-	class FieldTypes : StringCounts {
-		public FieldTypes(TypeDef type) {
-			Initialize(type.Fields);
-		}
-
-		public FieldTypes(IEnumerable<FieldDef> fields) {
-			Initialize(fields);
-		}
+	public class FieldTypes : StringCounts {
+		public FieldTypes(TypeDef type) => Initialize(type.Fields);
+		public FieldTypes(IEnumerable<FieldDef> fields) => Initialize(fields);
 
 		void Initialize(IEnumerable<FieldDef> fields) {
 			if (fields == null)
@@ -85,15 +71,13 @@ namespace de4dot.code.deobfuscators {
 		}
 	}
 
-	class LocalTypes : StringCounts {
+	public class LocalTypes : StringCounts {
 		public LocalTypes(MethodDef method) {
 			if (method != null && method.Body != null)
 				Initialize(method.Body.Variables);
 		}
 
-		public LocalTypes(IEnumerable<Local> locals) {
-			Initialize(locals);
-		}
+		public LocalTypes(IEnumerable<Local> locals) => Initialize(locals);
 
 		void Initialize(IEnumerable<Local> locals) {
 			if (locals == null)

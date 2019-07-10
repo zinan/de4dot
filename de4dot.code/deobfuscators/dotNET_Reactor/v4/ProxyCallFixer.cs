@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -26,9 +26,7 @@ namespace de4dot.code.deobfuscators.dotNET_Reactor.v4 {
 		ISimpleDeobfuscator simpleDeobfuscator;
 
 		public ProxyCallFixer(ModuleDefMD module, ISimpleDeobfuscator simpleDeobfuscator)
-			: base(module) {
-			this.simpleDeobfuscator = simpleDeobfuscator;
-		}
+			: base(module) => this.simpleDeobfuscator = simpleDeobfuscator;
 
 		public void FindDelegateCreator() {
 			foreach (var type in module.Types) {

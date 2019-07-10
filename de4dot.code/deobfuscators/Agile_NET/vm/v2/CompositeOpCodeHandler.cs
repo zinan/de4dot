@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -18,9 +18,6 @@
 */
 
 using System.Collections.Generic;
-using System.Text;
-using dnlib.DotNet;
-using de4dot.blocks;
 
 namespace de4dot.code.deobfuscators.Agile_NET.vm.v2 {
 	class CompositeOpCodeHandler {
@@ -28,12 +25,10 @@ namespace de4dot.code.deobfuscators.Agile_NET.vm.v2 {
 		public List<HandlerTypeCode> TypeCodes { get; private set; }
 
 		public CompositeOpCodeHandler(List<BlockSigInfo> blockSigInfos) {
-			this.BlockSigInfos = blockSigInfos;
-			this.TypeCodes = new List<HandlerTypeCode>();
+			BlockSigInfos = blockSigInfos;
+			TypeCodes = new List<HandlerTypeCode>();
 		}
 
-		public override string ToString() {
-			return OpCodeHandlerInfo.GetCompositeName(TypeCodes);
-		}
+		public override string ToString() => OpCodeHandlerInfo.GetCompositeName(TypeCodes);
 	}
 }

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -29,29 +29,12 @@ namespace de4dot.code.deobfuscators.ILProtector {
 		TypeDef invokerDelegate;
 		FieldDef invokerInstanceField;
 
-		public List<RuntimeFileInfo> RuntimeFileInfos {
-			get { return runtimeFileInfos; }
-		}
-
-		public TypeDef InvokerDelegate {
-			get { return invokerDelegate; }
-		}
-
-		public FieldDef InvokerInstanceField {
-			get { return invokerInstanceField; }
-		}
-
-		public bool Detected {
-			get { return runtimeFileInfos != null; }
-		}
-
-		public MainType(ModuleDefMD module) {
-			this.module = module;
-		}
-
-		public void Find() {
-			CheckMethod(DotNetUtils.GetModuleTypeCctor(module));
-		}
+		public List<RuntimeFileInfo> RuntimeFileInfos => runtimeFileInfos;
+		public TypeDef InvokerDelegate => invokerDelegate;
+		public FieldDef InvokerInstanceField => invokerInstanceField;
+		public bool Detected => runtimeFileInfos != null;
+		public MainType(ModuleDefMD module) => this.module = module;
+		public void Find() => CheckMethod(DotNetUtils.GetModuleTypeCctor(module));
 
 		static string[] ilpLocalsV1x = new string[] {
 			"System.Boolean",

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -23,26 +23,54 @@ using System.Text;
 using dnlib.DotNet;
 using de4dot.code;
 using de4dot.code.deobfuscators;
+using System.IO;
+using System.Reflection;
 
 namespace de4dot.cui {
 	class ExitException : Exception {
 		public readonly int code;
-		public ExitException(int code) {
-			this.code = code;
-		}
+		public ExitException(int code) => this.code = code;
 	}
 
 	class Program {
 		static IList<IDeobfuscatorInfo> deobfuscatorInfos = CreateDeobfuscatorInfos();
 
+		static IList<IDeobfuscatorInfo> LoadPlugin(string assembly) {
+			var plugins = new List<IDeobfuscatorInfo>();
+			try {
+				foreach (var item in Assembly.LoadFile(assembly).GetTypes()) {
+					var interfaces = new List<Type>(item.GetInterfaces());
+					if (item.IsClass && interfaces.Contains(typeof(IDeobfuscatorInfo)))
+						plugins.Add((IDeobfuscatorInfo)Activator.CreateInstance(item));
+				}
+			}
+			catch {
+			}
+			return plugins;
+		}
+
+		public static void GetPlugins(string directory, ref Dictionary<string, IDeobfuscatorInfo> result) {
+			var plugins = new List<IDeobfuscatorInfo>();
+			try {
+				var files = Directory.GetFiles(directory, "deobfuscator.*.dll", SearchOption.TopDirectoryOnly);
+				foreach (var file in files)
+					plugins.AddRange(LoadPlugin(Path.GetFullPath(file)));
+			}
+			catch {
+			}
+			foreach(var p in plugins)
+				result[p.Type] = p;
+		}
+
 		static IList<IDeobfuscatorInfo> CreateDeobfuscatorInfos() {
-			return new List<IDeobfuscatorInfo> {
+			var local = new List<IDeobfuscatorInfo> {
 				new de4dot.code.deobfuscators.Unknown.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.Agile_NET.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.Babel_NET.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.CodeFort.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.CodeVeil.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.CodeWall.DeobfuscatorInfo(),
+				new de4dot.code.deobfuscators.Confuser.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.CryptoObfuscator.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.DeepSea.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.Dotfuscator.DeobfuscatorInfo(),
@@ -59,6 +87,12 @@ namespace de4dot.cui {
 				new de4dot.code.deobfuscators.Spices_Net.DeobfuscatorInfo(),
 				new de4dot.code.deobfuscators.Xenocode.DeobfuscatorInfo(),
 			};
+			var dict = new Dictionary<string, IDeobfuscatorInfo>();
+			foreach (var d in local)
+				dict[d.Type] = d;
+			string pluginDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin");
+			GetPlugins(pluginDir, ref dict);
+			return new List<IDeobfuscatorInfo>(dict.Values);
 		}
 
 		public static int Main(string[] args) {
@@ -66,13 +100,13 @@ namespace de4dot.cui {
 
 			const string showAllMessagesEnvName = "SHOWALLMESSAGES";
 			try {
-				if (Console.OutputEncoding.IsSingleByte)
+				if (Console.OutputEncoding.IsSingleByte || Console.OutputEncoding.CodePage == 437)
 					Console.OutputEncoding = new UTF8Encoding(false);
 
 				Logger.Instance.CanIgnoreMessages = !HasEnv(showAllMessagesEnvName);
 
 				Logger.n("");
-				Logger.n("de4dot v{0} Copyright (C) 2011-2014 de4dot@gmail.com", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
+				Logger.n("de4dot v{0} Copyright (C) 2011-2015 de4dot@gmail.com", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
 				Logger.n("Latest version and source code: https://github.com/0xd4d/de4dot");
 				Logger.n("");
 
@@ -142,12 +176,12 @@ namespace de4dot.cui {
 		static bool IsN00bUser() {
 			if (HasEnv("VisualStudioDir"))
 				return false;
+			if (HasEnv("SHELL"))
+				return false;
 			return HasEnv("windir") && !HasEnv("PROMPT");
 		}
 
-		public static void PrintStackTrace(Exception ex) {
-			PrintStackTrace(ex, LoggerEvent.Error);
-		}
+		public static void PrintStackTrace(Exception ex) => PrintStackTrace(ex, LoggerEvent.Error);
 
 		public static void PrintStackTrace(Exception ex, LoggerEvent loggerEvent) {
 			var line = new string('-', 78);

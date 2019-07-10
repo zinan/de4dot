@@ -1,4 +1,4 @@
-﻿// QuickLZ data compression library
+// QuickLZ data compression library
 // Copyright (C) 2006-2011 Lasse Mikkel Reinhold
 // lar@quicklz.com
 //
@@ -12,10 +12,8 @@
 using System;
 
 namespace de4dot.code.deobfuscators {
-	class QuickLZBase {
-		protected static uint Read32(byte[] data, int index) {
-			return BitConverter.ToUInt32(data, index);
-		}
+	public class QuickLZBase {
+		protected static uint Read32(byte[] data, int index) => BitConverter.ToUInt32(data, index);
 
 		// Can't use Array.Copy() when data overlaps so here's one that works
 		protected static void Copy(byte[] src, int srcIndex, byte[] dst, int dstIndex, int size) {
@@ -113,7 +111,7 @@ namespace de4dot.code.deobfuscators {
 		}
 	}
 
-	class QuickLZ : QuickLZBase {
+	public class QuickLZ : QuickLZBase {
 		static int DEFAULT_QCLZ_SIG = 0x5A4C4351;	// "QCLZ"
 
 		public static bool IsCompressed(byte[] data) {
@@ -122,12 +120,10 @@ namespace de4dot.code.deobfuscators {
 			return BitConverter.ToInt32(data, 0) == DEFAULT_QCLZ_SIG;
 		}
 
-		public static byte[] Decompress(byte[] inData) {
-			return Decompress(inData, DEFAULT_QCLZ_SIG);
-		}
+		public static byte[] Decompress(byte[] inData) => Decompress(inData, DEFAULT_QCLZ_SIG);
 
 		public static byte[] Decompress(byte[] inData, int sig) {
-			int mode = BitConverter.ToInt32(inData, 4);
+			/*int mode =*/ BitConverter.ToInt32(inData, 4);
 			int compressedLength = BitConverter.ToInt32(inData, 8);
 			int decompressedLength = BitConverter.ToInt32(inData, 12);
 			bool isDataCompressed = BitConverter.ToInt32(inData, 16) == 1;

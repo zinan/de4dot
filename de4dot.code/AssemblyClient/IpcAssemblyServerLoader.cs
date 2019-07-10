@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -17,21 +17,12 @@
     along with de4dot.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#if NETFRAMEWORK
 using System;
 using AssemblyData;
 
 namespace de4dot.code.AssemblyClient {
-	enum ServerClrVersion {
-		CLR_ANY_ANYCPU,
-		CLR_ANY_x86,
-		CLR_ANY_x64,
-		CLR_v20_x86,
-		CLR_v20_x64,
-		CLR_v40_x86,
-		CLR_v40_x64,
-	}
-
-	abstract class IpcAssemblyServerLoader : IAssemblyServerLoader {
+	public abstract class IpcAssemblyServerLoader : IAssemblyServerLoader {
 		readonly string assemblyServerFilename;
 		protected string ipcName;
 		protected string ipcUri;
@@ -47,7 +38,7 @@ namespace de4dot.code.AssemblyClient {
 			assemblyServerFilename = GetServerName(serverVersion);
 			ipcName = Utils.RandomName(15, 20);
 			ipcUri = Utils.RandomName(15, 20);
-			url = string.Format("ipc://{0}/{1}", ipcName, ipcUri);
+			url = $"ipc://{ipcName}/{ipcUri}";
 		}
 
 		static string GetServerName(ServerClrVersion serverVersion) {
@@ -60,20 +51,14 @@ namespace de4dot.code.AssemblyClient {
 			case ServerClrVersion.CLR_v20_x64: return "AssemblyServer-CLR20-x64.exe";
 			case ServerClrVersion.CLR_v40_x86: return "AssemblyServer-CLR40.exe";
 			case ServerClrVersion.CLR_v40_x64: return "AssemblyServer-CLR40-x64.exe";
-			default: throw new ArgumentException(string.Format("Invalid server version: {0}", serverVersion));
+			default: throw new ArgumentException($"Invalid server version: {serverVersion}");
 			}
 		}
 
-		public void LoadServer() {
-			LoadServer(Utils.GetPathOfOurFile(assemblyServerFilename));
-		}
-
+		public void LoadServer() => LoadServer(Utils.GetPathOfOurFile(assemblyServerFilename));
 		public abstract void LoadServer(string filename);
-
-		public IAssemblyService CreateService() {
-			return (IAssemblyService)Activator.GetObject(AssemblyService.GetType(serviceType), url);
-		}
-
+		public IAssemblyService CreateService() => (IAssemblyService)Activator.GetObject(AssemblyService.GetType(serviceType), url);
 		public abstract void Dispose();
 	}
 }
+#endif

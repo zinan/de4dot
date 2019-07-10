@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -34,9 +34,7 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 		public bool isTempFile = false;
 		public string flags = "";
 
-		public override string ToString() {
-			return assemblyName ?? base.ToString();
-		}
+		public override string ToString() => assemblyName ?? base.ToString();
 
 		public static EmbeddedAssemblyInfo Create(ModuleDefMD module, string encName, string rsrcName) {
 			var info = new EmbeddedAssemblyInfo();
@@ -74,13 +72,8 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 		MethodDef simpleZipTypeMethod;
 		List<EmbeddedAssemblyInfo> embeddedAssemblyInfos = new List<EmbeddedAssemblyInfo>();
 
-		public MethodDef SimpleZipTypeMethod {
-			get { return simpleZipTypeMethod; }
-		}
-
-		public IList<EmbeddedAssemblyInfo> EmbeddedAssemblyInfos {
-			get { return embeddedAssemblyInfos; }
-		}
+		public MethodDef SimpleZipTypeMethod => simpleZipTypeMethod;
+		public IList<EmbeddedAssemblyInfo> EmbeddedAssemblyInfos => embeddedAssemblyInfos;
 
 		public AssemblyResolverInfo(ModuleDefMD module, ISimpleDeobfuscator simpleDeobfuscator, IDeobfuscator deob)
 			: base(module, simpleDeobfuscator, deob) {

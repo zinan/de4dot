@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -35,13 +35,12 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 		int i1, i2, i3;
 		int m1_i1, m2_i1, m2_i2, m3_i1;
 		MethodDef[] efConstMethods;
+		List<int> shiftConsts;
 
-		public MethodDef Int64Method {
-			get { return int64Method; }
-		}
+		public MethodDef Int64Method => int64Method;
 
 		public TypeDef Type {
-			get { return type; }
+			get => type;
 			set {
 				if (type == null)
 					type = value;
@@ -50,8 +49,16 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 			}
 		}
 
-		public bool Detected {
-			get { return type != null; }
+		public bool Detected => type != null;
+
+		public List<int> ShiftConsts {
+			get => shiftConsts;
+			set {
+				if (shiftConsts == null)
+					shiftConsts = value;
+				else if (shiftConsts != value)
+					throw new ApplicationException("Found another one");
+			}
 		}
 
 		public DecrypterType(ModuleDefMD module, ISimpleDeobfuscator simpleDeobfuscator) {
@@ -216,6 +223,7 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 			return false;
 		}
 
+		
 		static List<MethodDef> GetBinaryIntMethods(TypeDef type) {
 			var list = new List<MethodDef>();
 			foreach (var method in type.Methods) {
@@ -289,8 +297,7 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 			var instrs = method.Body.Instructions;
 			var constantsReader = new EfConstantsReader(method);
 			while (true) {
-				int val;
-				if (!constantsReader.GetNextInt32(ref index, out val))
+				if (!constantsReader.GetNextInt32(ref index, out int val))
 					break;
 
 				if (index < instrs.Count && instrs[index].OpCode.Code != Code.Ret)
@@ -300,41 +307,27 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 			return list;
 		}
 
-		int BinOp1(int a, int b) {
-			return a ^ (b - m1_i1);
-		}
+		int BinOp1(int a, int b) => a ^ (b - m1_i1);
+		int BinOp2(int a, int b) => (a - m2_i1) ^ (b + m2_i2);
+		int BinOp3(int a, int b) => a ^ (b - m3_i1) ^ (a - b);
 
-		int BinOp2(int a, int b) {
-			return (a - m2_i1) ^ (b + m2_i2);
-		}
+		int ConstMethod1() =>
+			BinOp3(BinOp2(efConstMethods[1].DeclaringType.MDToken.ToInt32(), BinOp3(efConstMethods[0].DeclaringType.MDToken.ToInt32(), efConstMethods[4].DeclaringType.MDToken.ToInt32())), ConstMethod6());
 
-		int BinOp3(int a, int b) {
-			return a ^ (b - m3_i1) ^ (a - b);
-		}
+		int ConstMethod2() =>
+			BinOp1(efConstMethods[2].DeclaringType.MDToken.ToInt32(), efConstMethods[3].DeclaringType.MDToken.ToInt32() ^ BinOp2(efConstMethods[1].DeclaringType.MDToken.ToInt32(), BinOp3(efConstMethods[5].DeclaringType.MDToken.ToInt32(), ConstMethod4())));
 
-		int ConstMethod1() {
-			return BinOp3(BinOp2(efConstMethods[1].DeclaringType.MDToken.ToInt32(), BinOp3(efConstMethods[0].DeclaringType.MDToken.ToInt32(), efConstMethods[4].DeclaringType.MDToken.ToInt32())), ConstMethod6());
-		}
+		int ConstMethod3() =>
+			BinOp3(BinOp1(ConstMethod2() ^ i1, efConstMethods[3].DeclaringType.MDToken.ToInt32()), BinOp2(efConstMethods[0].DeclaringType.MDToken.ToInt32() ^ efConstMethods[5].DeclaringType.MDToken.ToInt32(), i2));
 
-		int ConstMethod2() {
-			return BinOp1(efConstMethods[2].DeclaringType.MDToken.ToInt32(), efConstMethods[3].DeclaringType.MDToken.ToInt32() ^ BinOp2(efConstMethods[1].DeclaringType.MDToken.ToInt32(), BinOp3(efConstMethods[5].DeclaringType.MDToken.ToInt32(), ConstMethod4())));
-		}
+		int ConstMethod4() =>
+			BinOp3(efConstMethods[3].DeclaringType.MDToken.ToInt32(), BinOp1(efConstMethods[0].DeclaringType.MDToken.ToInt32(), BinOp2(efConstMethods[1].DeclaringType.MDToken.ToInt32(), BinOp3(efConstMethods[2].DeclaringType.MDToken.ToInt32(), BinOp1(efConstMethods[4].DeclaringType.MDToken.ToInt32(), efConstMethods[5].DeclaringType.MDToken.ToInt32())))));
 
-		int ConstMethod3() {
-			return BinOp3(BinOp1(ConstMethod2() ^ i1, efConstMethods[3].DeclaringType.MDToken.ToInt32()), BinOp2(efConstMethods[0].DeclaringType.MDToken.ToInt32() ^ efConstMethods[5].DeclaringType.MDToken.ToInt32(), i2));
-		}
+		int ConstMethod5() =>
+			BinOp2(BinOp2(ConstMethod3(), BinOp1(efConstMethods[4].DeclaringType.MDToken.ToInt32(), ConstMethod2())), efConstMethods[5].DeclaringType.MDToken.ToInt32());
 
-		int ConstMethod4() {
-			return BinOp3(efConstMethods[3].DeclaringType.MDToken.ToInt32(), BinOp1(efConstMethods[0].DeclaringType.MDToken.ToInt32(), BinOp2(efConstMethods[1].DeclaringType.MDToken.ToInt32(), BinOp3(efConstMethods[2].DeclaringType.MDToken.ToInt32(), BinOp1(efConstMethods[4].DeclaringType.MDToken.ToInt32(), efConstMethods[5].DeclaringType.MDToken.ToInt32())))));
-		}
-
-		int ConstMethod5() {
-			return BinOp2(BinOp2(ConstMethod3(), BinOp1(efConstMethods[4].DeclaringType.MDToken.ToInt32(), ConstMethod2())), efConstMethods[5].DeclaringType.MDToken.ToInt32());
-		}
-
-		int ConstMethod6() {
-			return BinOp1(efConstMethods[5].DeclaringType.MDToken.ToInt32(), BinOp3(BinOp2(efConstMethods[4].DeclaringType.MDToken.ToInt32(), efConstMethods[0].DeclaringType.MDToken.ToInt32()), BinOp3(efConstMethods[2].DeclaringType.MDToken.ToInt32() ^ i3, ConstMethod5())));
-		}
+		int ConstMethod6() =>
+			BinOp1(efConstMethods[5].DeclaringType.MDToken.ToInt32(), BinOp3(BinOp2(efConstMethods[4].DeclaringType.MDToken.ToInt32(), efConstMethods[0].DeclaringType.MDToken.ToInt32()), BinOp3(efConstMethods[2].DeclaringType.MDToken.ToInt32() ^ i3, ConstMethod5())));
 
 		public ulong GetMagic() {
 			if (type == null)
@@ -346,15 +339,18 @@ namespace de4dot.code.deobfuscators.Eazfuscator_NET {
 					bytes.AddRange(module.Assembly.PublicKeyToken.Data);
 				bytes.AddRange(Encoding.Unicode.GetBytes(module.Assembly.Name.String));
 			}
-			int cm1 = ConstMethod1();
-			bytes.Add((byte)(type.MDToken.ToInt32() >> 24));
-			bytes.Add((byte)(cm1 >> 16));
-			bytes.Add((byte)(type.MDToken.ToInt32() >> 8));
-			bytes.Add((byte)cm1);
-			bytes.Add((byte)(type.MDToken.ToInt32() >> 16));
-			bytes.Add((byte)(cm1 >> 8));
-			bytes.Add((byte)type.MDToken.ToInt32());
-			bytes.Add((byte)(cm1 >> 24));
+
+			int num3 = ConstMethod1();
+			int num2 = type.MDToken.ToInt32();
+
+			bytes.Add((byte)(num2 >> shiftConsts[0]));
+			bytes.Add((byte)(num3 >> shiftConsts[1]));
+			bytes.Add((byte)(num2 >> shiftConsts[2]));
+			bytes.Add((byte)(num3 >> shiftConsts[3]));
+			bytes.Add((byte)(num2 >> shiftConsts[4]));
+			bytes.Add((byte)(num3 >> shiftConsts[5]));
+			bytes.Add((byte)(num2 >> shiftConsts[6]));
+			bytes.Add((byte)(num3 >> shiftConsts[7]));
 
 			ulong magic = 0;
 			foreach (var b in bytes) {

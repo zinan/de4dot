@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -24,9 +24,7 @@ using de4dot.blocks;
 
 namespace de4dot.code.deobfuscators.Babel_NET {
 	class InflaterCreator {
-		public static Inflater Create(MethodDef method, bool noHeader) {
-			return Create(FindInflaterType(method), noHeader);
-		}
+		public static Inflater Create(MethodDef method, bool noHeader) => Create(FindInflaterType(method), noHeader);
 
 		public static Inflater Create(TypeDef inflaterType, bool noHeader) {
 			if (inflaterType == null)
@@ -40,9 +38,7 @@ namespace de4dot.code.deobfuscators.Babel_NET {
 			return new BabelInflater(noHeader, magic.Value);
 		}
 
-		static Inflater CreateNormal(bool noHeader) {
-			return CreateNormal(noHeader, null);
-		}
+		static Inflater CreateNormal(bool noHeader) => CreateNormal(noHeader, null);
 
 		static Inflater CreateNormal(bool noHeader, string errorMessage) {
 			if (errorMessage != null)

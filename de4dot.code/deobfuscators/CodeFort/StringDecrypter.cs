@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -27,21 +27,10 @@ namespace de4dot.code.deobfuscators.CodeFort {
 		ModuleDefMD module;
 		MethodDef decryptMethod;
 
-		public bool Detected {
-			get { return decryptMethod != null; }
-		}
-
-		public MethodDef Method {
-			get { return decryptMethod; }
-		}
-
-		public TypeDef Type {
-			get { return decryptMethod == null ? null : decryptMethod.DeclaringType; }
-		}
-
-		public StringDecrypter(ModuleDefMD module) {
-			this.module = module;
-		}
+		public bool Detected => decryptMethod != null;
+		public MethodDef Method => decryptMethod;
+		public TypeDef Type => decryptMethod?.DeclaringType;
+		public StringDecrypter(ModuleDefMD module) => this.module = module;
 
 		public void Find() {
 			foreach (var type in module.Types) {

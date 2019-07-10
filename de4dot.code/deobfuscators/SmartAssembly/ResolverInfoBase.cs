@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -30,9 +30,7 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 		TypeDef resolverType;
 		MethodDef callResolverMethod;
 
-		public TypeDef Type {
-			get { return resolverType; }
-		}
+		public TypeDef Type => resolverType;
 
 		public TypeDef CallResolverType {
 			get {
@@ -44,9 +42,7 @@ namespace de4dot.code.deobfuscators.SmartAssembly {
 			}
 		}
 
-		public MethodDef CallResolverMethod {
-			get { return callResolverMethod; }
-		}
+		public MethodDef CallResolverMethod => callResolverMethod;
 
 		public ResolverInfoBase(ModuleDefMD module, ISimpleDeobfuscator simpleDeobfuscator, IDeobfuscator deob) {
 			this.module = module;

@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -29,9 +29,7 @@ namespace de4dot.code.deobfuscators.DeepSea {
 		Dictionary<Local, ArrayBlockState.FieldInfo> localToInfo = new Dictionary<Local, ArrayBlockState.FieldInfo>();
 		DsConstantsReader constantsReader;
 
-		public ArrayBlockDeobfuscator(ArrayBlockState arrayBlockState) {
-			this.arrayBlockState = arrayBlockState;
-		}
+		public ArrayBlockDeobfuscator(ArrayBlockState arrayBlockState) => this.arrayBlockState = arrayBlockState;
 
 		public override void DeobfuscateBegin(Blocks blocks) {
 			base.DeobfuscateBegin(blocks);
@@ -144,8 +142,7 @@ namespace de4dot.code.deobfuscators.DeepSea {
 			var local = ldloc.Instruction.GetLocal(blocks.Locals);
 			if (local == null)
 				return false;
-			ArrayBlockState.FieldInfo info;
-			if (!localToInfo.TryGetValue(local, out info))
+			if (!localToInfo.TryGetValue(local, out var info))
 				return false;
 
 			var ldci4 = instrs[i + 1];
@@ -203,9 +200,8 @@ namespace de4dot.code.deobfuscators.DeepSea {
 				return false;
 
 			var constants = GetConstantsReader(block);
-			int value;
 			i += 2;
-			if (!constants.GetInt32(ref i, out value))
+			if (!constants.GetInt32(ref i, out int value))
 				return false;
 
 			if (i >= instrs.Count)

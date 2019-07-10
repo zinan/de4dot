@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -27,21 +27,12 @@ namespace de4dot.blocks {
 	public class DumpedMethods {
 		Dictionary<uint, DumpedMethod> methods = new Dictionary<uint, DumpedMethod>();
 
-		public int Count {
-			get { return methods.Count; }
-		}
-
-		public void Add(uint token, DumpedMethod info) {
-			methods[token] = info;
-		}
-
-		public DumpedMethod Get(MethodDef method) {
-			return Get(method.MDToken.ToUInt32());
-		}
+		public int Count => methods.Count;
+		public void Add(uint token, DumpedMethod info) => methods[token] = info;
+		public DumpedMethod Get(MethodDef method) => Get(method.MDToken.ToUInt32());
 
 		public DumpedMethod Get(uint token) {
-			DumpedMethod dm;
-			methods.TryGetValue(token, out dm);
+			methods.TryGetValue(token, out var dm);
 			return dm;
 		}
 

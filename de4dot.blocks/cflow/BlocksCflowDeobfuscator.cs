@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -27,21 +27,27 @@ namespace de4dot.blocks.cflow {
 		List<IBlocksDeobfuscator> userBlocksDeobfuscators = new List<IBlocksDeobfuscator>();
 		List<IBlocksDeobfuscator> ourBlocksDeobfuscators = new List<IBlocksDeobfuscator>();
 
-		public BlocksCflowDeobfuscator() {
-			Initialize();
+		public BlocksCflowDeobfuscator()
+			: this(false) {
 		}
 
-		public BlocksCflowDeobfuscator(IEnumerable<IBlocksDeobfuscator> blocksDeobfuscator) {
-			Initialize();
+		public BlocksCflowDeobfuscator(bool disableNewCFCode) => Initialize(disableNewCFCode);
+
+		public BlocksCflowDeobfuscator(IEnumerable<IBlocksDeobfuscator> blocksDeobfuscator)
+			: this(blocksDeobfuscator, false) {
+		}
+
+		public BlocksCflowDeobfuscator(IEnumerable<IBlocksDeobfuscator> blocksDeobfuscator, bool disableNewCFCode) {
+			Initialize(disableNewCFCode);
 			Add(blocksDeobfuscator);
 		}
 
-		void Initialize() {
+		void Initialize(bool disableNewCFCode) {
 			ourBlocksDeobfuscators.Add(new BlockCflowDeobfuscator { ExecuteIfNotModified = false });
 			ourBlocksDeobfuscators.Add(new SwitchCflowDeobfuscator { ExecuteIfNotModified = false });
 			ourBlocksDeobfuscators.Add(new DeadStoreRemover { ExecuteIfNotModified = false });
 			ourBlocksDeobfuscators.Add(new DeadCodeRemover { ExecuteIfNotModified = false });
-			ourBlocksDeobfuscators.Add(new ConstantsFolder { ExecuteIfNotModified = true });
+			ourBlocksDeobfuscators.Add(new ConstantsFolder { ExecuteIfNotModified = true, DisableNewCode = disableNewCFCode });
 			ourBlocksDeobfuscators.Add(new StLdlocFixer { ExecuteIfNotModified = true });
 			ourBlocksDeobfuscators.Add(new DupBlockCflowDeobfuscator { ExecuteIfNotModified = true });
 		}
@@ -56,9 +62,7 @@ namespace de4dot.blocks.cflow {
 				userBlocksDeobfuscators.Add(blocksDeobfuscator);
 		}
 
-		public void Initialize(Blocks blocks) {
-			this.blocks = blocks;
-		}
+		public void Initialize(Blocks blocks) => this.blocks = blocks;
 
 		public void Deobfuscate() {
 			bool modified;
@@ -159,9 +163,7 @@ namespace de4dot.blocks.cflow {
 			return modified;
 		}
 
-		bool RemoveDeadBlocks() {
-			return new DeadBlocksRemover(blocks.MethodBlocks).Remove() > 0;
-		}
+		bool RemoveDeadBlocks() => new DeadBlocksRemover(blocks.MethodBlocks).Remove() > 0;
 
 		bool MergeBlocks() {
 			bool modified = false;

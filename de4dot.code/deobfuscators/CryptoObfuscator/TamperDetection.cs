@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -27,17 +27,9 @@ namespace de4dot.code.deobfuscators.CryptoObfuscator {
 		MethodDef tamperMethod;
 		FrameworkType frameworkType;
 
-		public bool Detected {
-			get { return tamperMethod != null; }
-		}
-
-		public TypeDef Type {
-			get { return tamperType; }
-		}
-
-		public MethodDef Method {
-			get { return tamperMethod; }
-		}
+		public bool Detected => tamperMethod != null;
+		public TypeDef Type => tamperType;
+		public MethodDef Method => tamperMethod;
 
 		public TamperDetection(ModuleDefMD module) {
 			this.module = module;

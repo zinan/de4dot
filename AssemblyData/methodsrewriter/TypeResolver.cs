@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -21,30 +21,21 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using dnlib.DotNet;
-using de4dot.blocks;
 
 namespace AssemblyData.methodsrewriter {
 	class TypeResolver {
 		public Type type;
 		Dictionary<ITypeDefOrRef, TypeInstanceResolver> typeRefToInstance = new Dictionary<ITypeDefOrRef, TypeInstanceResolver>(TypeEqualityComparer.Instance);
 
-		public TypeResolver(Type type) {
-			this.type = type;
-		}
+		public TypeResolver(Type type) => this.type = type;
 
 		TypeInstanceResolver GetTypeInstance(ITypeDefOrRef typeRef) {
-			TypeInstanceResolver instance;
-			if (!typeRefToInstance.TryGetValue(typeRef, out instance))
+			if (!typeRefToInstance.TryGetValue(typeRef, out var instance))
 				typeRefToInstance[typeRef] = instance = new TypeInstanceResolver(type, typeRef);
 			return instance;
 		}
 
-		public FieldInfo Resolve(IField fieldRef) {
-			return GetTypeInstance(fieldRef.DeclaringType).Resolve(fieldRef);
-		}
-
-		public MethodBase Resolve(IMethod methodRef) {
-			return GetTypeInstance(methodRef.DeclaringType).Resolve(methodRef);
-		}
+		public FieldInfo Resolve(IField fieldRef) => GetTypeInstance(fieldRef.DeclaringType).Resolve(fieldRef);
+		public MethodBase Resolve(IMethod methodRef) => GetTypeInstance(methodRef.DeclaringType).Resolve(methodRef);
 	}
 }

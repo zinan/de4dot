@@ -1,4 +1,4 @@
-﻿/**************************   mersenne.cpp   **********************************
+/**************************   mersenne.cpp   **********************************
 * Author:        Agner Fog
 * Date created:  2001
 * Last modified: 2008-11-16
@@ -43,9 +43,7 @@ namespace de4dot.code.deobfuscators.CodeWall.randomc {
 		public CRandomMersenne() {
 		}
 
-		public CRandomMersenne(int seed) {
-			RandomInit(seed);
-		}
+		public CRandomMersenne(int seed) => RandomInit(seed);
 
 		void Init0(int seed) {
 			// Seed generator

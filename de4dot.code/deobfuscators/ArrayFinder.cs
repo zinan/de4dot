@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -20,21 +20,17 @@
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using de4dot.blocks;
 using de4dot.blocks.cflow;
 
 namespace de4dot.code.deobfuscators {
-	static class ArrayFinder {
-		public static List<byte[]> GetArrays(MethodDef method) {
-			return GetArrays(method, null);
-		}
+	public static class ArrayFinder {
+		public static List<byte[]> GetArrays(MethodDef method) => GetArrays(method, null);
 
 		public static List<byte[]> GetArrays(MethodDef method, IType arrayElementType) {
 			var arrays = new List<byte[]>();
 			var instrs = method.Body.Instructions;
 			for (int i = 0; i < instrs.Count; i++) {
-				IType type;
-				var ary = GetArray(instrs, ref i, out type);
+				var ary = GetArray(instrs, ref i, out var type);
 				if (ary == null)
 					break;
 				if (arrayElementType != null && !new SigComparer().Equals(type, arrayElementType))
@@ -185,8 +181,7 @@ done:
 
 		static int FindNewarr(MethodDef method, int arraySize) {
 			for (int i = 0; ; i++) {
-				int size;
-				if (!FindNewarr(method, ref i, out size))
+				if (!FindNewarr(method, ref i, out int size))
 					return -1;
 				if (size == arraySize)
 					return i;

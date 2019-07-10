@@ -1,5 +1,5 @@
-﻿/*
-    Copyright (C) 2011-2014 de4dot@gmail.com
+/*
+    Copyright (C) 2011-2015 de4dot@gmail.com
 
     This file is part of de4dot.
 
@@ -36,9 +36,9 @@ namespace de4dot.code.deobfuscators.DeepSea {
 
 			public FieldInfo(FieldDef field, FieldDef arrayInitField) {
 				this.field = field;
-				this.elementType = ((SZArraySig)field.FieldType).Next.GetElementType();
+				elementType = ((SZArraySig)field.FieldType).Next.GetElementType();
 				this.arrayInitField = arrayInitField;
-				this.array = CreateArray(elementType, arrayInitField.InitialValue);
+				array = CreateArray(elementType, arrayInitField.InitialValue);
 			}
 
 			static Array CreateArray(ElementType etype, byte[] data) {
@@ -88,17 +88,11 @@ namespace de4dot.code.deobfuscators.DeepSea {
 			}
 		}
 
-		public bool Detected {
-			get { return fieldToInfo.Count != 0; }
-		}
+		public bool Detected => fieldToInfo.Count != 0;
+		public ArrayBlockState(ModuleDefMD module) => this.module = module;
 
-		public ArrayBlockState(ModuleDefMD module) {
-			this.module = module;
-		}
-
-		public void Initialize(ISimpleDeobfuscator simpleDeobfuscator) {
+		public void Initialize(ISimpleDeobfuscator simpleDeobfuscator) =>
 			InitializeArrays(simpleDeobfuscator, DotNetUtils.GetModuleTypeCctor(module));
-		}
 
 		void InitializeArrays(ISimpleDeobfuscator simpleDeobfuscator, MethodDef method) {
 			if (method == null || method.Body == null)
@@ -109,7 +103,7 @@ namespace de4dot.code.deobfuscators.DeepSea {
 
 		bool InitializeArrays2(ISimpleDeobfuscator simpleDeobfuscator, MethodDef method) {
 			bool foundField = false;
-			simpleDeobfuscator.Deobfuscate(method, true);
+			simpleDeobfuscator.Deobfuscate(method, SimpleDeobfuscatorFlags.Force);
 			var instructions = method.Body.Instructions;
 			for (int i = 0; i < instructions.Count; i++) {
 				var ldci4 = instructions[i];
@@ -169,9 +163,7 @@ namespace de4dot.code.deobfuscators.DeepSea {
 				fieldInfo.arrayInitField.RVA = 0;
 			}
 
-			IList<Instruction> allInstructions;
-			IList<ExceptionHandler> allExceptionHandlers;
-			moduleCctorBlocks.GetCode(out allInstructions, out allExceptionHandlers);
+			moduleCctorBlocks.GetCode(out var allInstructions, out var allExceptionHandlers);
 			DotNetUtils.RestoreBody(moduleCctorBlocks.Method, allInstructions, allExceptionHandlers);
 			return removedFields;
 		}
